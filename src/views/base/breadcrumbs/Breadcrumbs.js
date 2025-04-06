@@ -39,13 +39,13 @@ const Breadcrumbs = () => {
             <DocsExample href="components/breadcrumb">
               <CBreadcrumb>
                 <CBreadcrumbItem>
-                  <CLink href="#">Home</CLink>
+                  <CLink href="#">Inicio</CLink>
                 </CBreadcrumbItem>
                 <CBreadcrumbItem active>Library</CBreadcrumbItem>
               </CBreadcrumb>
               <CBreadcrumb>
                 <CBreadcrumbItem>
-                  <CLink href="#">Home</CLink>
+                  <CLink href="#">Inicio</CLink>
                 </CBreadcrumbItem>
                 <CBreadcrumbItem>
                   <CLink href="#">Library</CLink>
@@ -54,7 +54,7 @@ const Breadcrumbs = () => {
               </CBreadcrumb>
               <CBreadcrumb>
                 <CBreadcrumbItem>
-                  <CLink href="#">Home</CLink>
+                  <CLink href="#">Inicio</CLink>
                 </CBreadcrumbItem>
                 <CBreadcrumbItem>
                   <CLink href="#">Library</CLink>
