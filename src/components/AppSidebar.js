@@ -26,8 +26,9 @@ const AppSidebar = () => {
 
   return (
     <CSidebar
+    style={{ backgroundColor: 'black' }}
       className="border-end"
-      colorScheme="dark"
+      colorScheme="black"
       position="fixed"
       unfoldable={unfoldable}
       visible={sidebarShow}
