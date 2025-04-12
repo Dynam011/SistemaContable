@@ -19,13 +19,16 @@ import {
   CForm,
   CFormInput,
   CFormCheck,
+
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilPencil, cilSettings, cilUser } from '@coreui/icons'
+import {CIcon} from '@coreui/icons-react'
+import { cilPencil, cilSettings, cilUser, cilExitToApp} from '@coreui/icons'
 
 const Profile = () => {
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
+  const [logoutVisible, setLogoutVisible] = useState(false)
+
   const [profileData, setProfileData] = useState({
     name: 'John Doe',
     email: 'john.doe@example.com',
@@ -62,7 +65,7 @@ const Profile = () => {
             />
             <CCardBody>
               <CCardTitle>{profileData.name}</CCardTitle>
-              <CCardText className="text-muted">Software Engineer</CCardText>
+              <CCardText className="text-muted">Admin</CCardText>
               <CButton color="primary" className="me-2" onClick={() => setEditModalVisible(true)}>
                 <CIcon icon={cilPencil} className="me-1" />
                 Editar Perfil
@@ -70,6 +73,10 @@ const Profile = () => {
               <CButton color="secondary" onClick={() => setSettingsModalVisible(true)}>
                 <CIcon icon={cilSettings} className="me-1" />
                 Configuración
+              </CButton>
+              <CButton className="text-danger"  onClick={() => setLogoutVisible(true)}>
+                <CIcon icon={cilExitToApp} className="me-2" />
+                Logout
               </CButton>
             </CCardBody>
           </CCard>
@@ -193,6 +200,24 @@ const Profile = () => {
           </CButton>
           <CButton color="primary" onClick={() => setSettingsModalVisible(false)}>
             Guardar Cambios
+          </CButton>
+        </CModalFooter>
+      </CModal>
+        
+        {/* Modal para Logout */}
+      <CModal visible={logoutVisible} onClose={() => setLogoutVisible(false)}>
+        <CModalHeader>
+          <CModalTitle>¿Estás seguro?</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <p>¿Quieres cerrar sesión?</p>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setLogoutVisible(false)}>
+            Cancelar
+          </CButton>
+          <CButton color="danger" onClick={() => setLogoutVisible(false)}>
+            Cerrar Sesión
           </CButton>
         </CModalFooter>
       </CModal>

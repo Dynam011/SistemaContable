@@ -50,7 +50,16 @@ const _nav = [
     
   },
   
- 
+  {
+    component: CNavItem,
+    name: 'Sections',
+    to: '/sections',
+    icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+    badge: {
+      color: 'info',
+    },
+    
+  },
   {
     component: CNavGroup,
     name: 'Pages',
