@@ -1,6 +1,12 @@
 
 import React from 'react'
 
+const Enrollmentslist = React.lazy(() => import('./views/enrollments/Enrollmentslist'))
+const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
+
+
+import React from 'react'
+
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Profile = React.lazy(() => import('./views/user/Profile'))
@@ -11,6 +17,7 @@ const Enrollment = React.lazy(() => import('./views/enrollments/enrollment'))
 
 
 const routes = [
+
   { path: '/', exact: true, name: 'Home' },
   { path: '/users', name: 'Users', element: Users },
   { path: '/profile', name: 'Profile', element: Profile },

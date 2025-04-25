@@ -1,20 +1,41 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
+  cilStorage,
+  cilSchool,
+  cilCheck,
+  cilPenNib,
+  cilCalendar,
+  cilClipboard,
+  cilAddressBook,
+  cilApple,
+  cilRestaurant,
   cilBell,
   cilCalculator,
   cilChartPie,
+  cilListNumbered,
   cilCursor,
   cilDescription,
   cilDrop,
-  cilExternalLink,
   cilNotes,
   cilPencil,
+  cilPeople,
   cilPuzzle,
   cilSpeedometer,
   cilStar,
+
   cilGroup,
   cilUser,
+
+  cilWc,
+  cilDollar,
+  cilWallet,
+  cilCart,
+  cilLibrary,
+  cilContact,
+  cilDiamond,
+  cilMenu,
+
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -23,13 +44,13 @@ const _nav = [
     component: CNavItem,
     name: 'Dashboard',
     to: '/dashboard',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
+    icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />
+    
   },
-
+  {
+    component: CNavTitle,
+    name: 'User Management',
+  },
   {
     component: CNavItem,
     name: 'Users',
@@ -47,7 +68,96 @@ const _nav = [
     badge: {
       color: 'info',
     },
-    
+    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+  },
+  
+  {
+    component: CNavTitle,
+    name: 'Academic',
+  },
+  {
+    component: CNavItem,
+    name: 'Programs',
+    to: '/customers',
+    icon: <CIcon icon={cilClipboard} customClassName="nav-icon" />,
+  
+  },
+  {
+    component: CNavItem,
+    name: 'Subjects',
+    to: '/invoices',
+    icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Sections',
+    to: '/payments',
+    icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Schedules',
+    to: '/payments',
+    icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Enrollments',
+    to: '/enrollments',
+    icon: <CIcon icon={cilPenNib} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavTitle,
+    name: 'Inventory & Products',
+  },
+  {
+    component: CNavItem,
+    name: 'Inventory',
+    to: '/products',
+    icon: <CIcon icon={cilRestaurant} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Measurement Units',
+    to: '/inventory-movements',
+    icon: <CIcon icon={cilListNumbered} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavTitle,
+    name: 'Assessments',
+  },
+  {
+    component: CNavItem,
+    name: 'Assessments',
+    to: '/suppliers',
+    icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Grades',
+    to: '/suppliers',
+    icon: <CIcon icon={cilSchool} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavTitle,
+    name: 'Digital resources',
+  },
+  {
+    component: CNavItem,
+    name: 'Resources',
+    to: '/repairs',
+    icon: <CIcon icon={cilStorage} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavTitle,
+    name: 'Recipes',
+  },
+  {
+    component: CNavItem,
+    name: 'Recipes',
+    to: '/repairs',
+    icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+
   },
   
   {
@@ -59,31 +169,25 @@ const _nav = [
       color: 'info',
     },
     
+
+    name: 'Recipe Ingredients',
+    to: '/repairs',
+    icon: <CIcon icon={cilApple} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavTitle,
+    name: 'Extras',
+
   },
   {
     component: CNavGroup,
     name: 'Pages',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilMenu} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'Login',
         to: '/login',
-      },
-      {
-        component: CNavItem,
-        name: 'Register',
-        to: '/register',
-      },
-      {
-        component: CNavItem,
-        name: 'Error 404',
-        to: '/404',
-      },
-      {
-        component: CNavItem,
-        name: 'Error 500',
-        to: '/500',
       },
     ],
   },
