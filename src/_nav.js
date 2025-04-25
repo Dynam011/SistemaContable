@@ -23,7 +23,10 @@ import {
   cilPuzzle,
   cilSpeedometer,
   cilStar,
+
+  cilGroup,
   cilUser,
+
   cilWc,
   cilDollar,
   cilWallet,
@@ -32,6 +35,7 @@ import {
   cilContact,
   cilDiamond,
   cilMenu,
+
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -51,7 +55,19 @@ const _nav = [
     component: CNavItem,
     name: 'Users',
     to: '/users',
-    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
+    badge: {
+      color: 'info',
+    },
+  },
+  {
+    component: CNavItem,
+    name: 'Enrollments',
+    to: '/enrollments',
+    icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+    badge: {
+      color: 'info',
+    },
   },
   
   {
@@ -140,9 +156,19 @@ const _nav = [
     name: 'Recipes',
     to: '/repairs',
     icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+
   },
+  
   {
     component: CNavItem,
+    name: 'Sections',
+    to: '/sections',
+    icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+    badge: {
+      color: 'info',
+    },
+    
+
     name: 'Recipe Ingredients',
     to: '/repairs',
     icon: <CIcon icon={cilApple} customClassName="nav-icon" />,
@@ -150,6 +176,7 @@ const _nav = [
   {
     component: CNavTitle,
     name: 'Extras',
+
   },
   {
     component: CNavGroup,
@@ -163,6 +190,7 @@ const _nav = [
       },
     ],
   },
+
 ]
 
 export default _nav

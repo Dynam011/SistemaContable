@@ -47,6 +47,7 @@ const App = () => {
           <Route exact path="/login" name="Login" element={<Login />} />
           <Route exact path="/register" name="Registrarse" element={<Register />} />
           <Route path="*" name="Inicio" element={<DefaultLayout />} />
+       
         </Routes>
       </Suspense>
     </HashRouter>
