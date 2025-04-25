@@ -59,8 +59,8 @@ const _nav = [
     badge: {
       color: 'info',
     },
-    
-  },{
+  },
+  {
     component: CNavItem,
     name: 'Enrollments',
     to: '/enrollments',
@@ -68,7 +68,6 @@ const _nav = [
     badge: {
       color: 'info',
     },
-    icon: <CIcon icon={cilUser} customClassName="nav-icon" />,
   },
   
   {
