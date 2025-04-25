@@ -3,12 +3,6 @@ import React from 'react'
 
 const Enrollmentslist = React.lazy(() => import('./views/enrollments/Enrollmentslist'))
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
-
-
-import React from 'react'
-
-
-const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const Profile = React.lazy(() => import('./views/user/Profile'))
 const Users = React.lazy(() => import('./views/user/Users'))
 const Sections = React.lazy(() => import('./views/sections/sections'))
