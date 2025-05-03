@@ -60,15 +60,7 @@ const _nav = [
       color: 'info',
     },
   },
-  {
-    component: CNavItem,
-    name: 'Enrollments',
-    to: '/enrollments',
-    icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-    },
-  },
+
   
   {
     component: CNavTitle,
@@ -90,13 +82,13 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Sections',
-    to: '/payments',
+    to: '/sections',
     icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
     name: 'Schedules',
-    to: '/payments',
+    to: '/schedules',
     icon: <CIcon icon={cilCalendar} customClassName="nav-icon" />,
   },
   {
@@ -134,7 +126,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Grades',
-    to: '/suppliers',
+    to: '/grades',
     icon: <CIcon icon={cilSchool} customClassName="nav-icon" />,
   },
   {
@@ -144,7 +136,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Resources',
-    to: '/repairs',
+    to: '/resources',
     icon: <CIcon icon={cilStorage} customClassName="nav-icon" />,
   },
   {
@@ -154,7 +146,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Recipes',
-    to: '/repairs',
+    to: '/recipes',
     icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
 
   },
