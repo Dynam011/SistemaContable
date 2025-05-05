@@ -21,7 +21,8 @@ import {
   CModalTitle,
   CFormSelect,
 } from '@coreui/react'
-
+import CIcon from '@coreui/icons-react'
+import { cilPencil, cilTrash, cilPlus, cilWarning } from '@coreui/icons'
 export const UserList = (onUserAdded) => {
   const [filterName, setFilterName] = useState('')
   const [filterId, setFilterId] = useState('')
@@ -283,21 +284,19 @@ export const UserList = (onUserAdded) => {
                 <CTableDataCell>{user.status}</CTableDataCell>
                 <CTableDataCell>
                   <CButton
-                    color="info"
-                    variant="outline"
+                    color="primary"
                     size="sm"
-                    onClick={() => handleEdit(user)}
                     className="me-2"
+                    onClick={() => handleEdit(user)}
                   >
-                    Edit
+                    <CIcon icon={cilPencil} />
                   </CButton>
                   <CButton
-                    color="danger"
-                    variant="outline"
-                    size="sm"
+                      color="danger"
+                      size="sm"
                     onClick={() => handleDelete(user)}
                   >
-                    Delete
+        <CIcon icon={cilTrash} />
                   </CButton>
                 </CTableDataCell>
               </CTableRow>

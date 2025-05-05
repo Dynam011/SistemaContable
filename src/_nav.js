@@ -159,11 +159,7 @@ const _nav = [
     badge: {
       color: 'info',
     },
-    
 
-    name: 'Recipe Ingredients',
-    to: '/repairs',
-    icon: <CIcon icon={cilApple} customClassName="nav-icon" />,
   },
   {
     component: CNavTitle,
