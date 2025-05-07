@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   CButton,
   CCard,
@@ -23,79 +23,97 @@ import {
   CModalHeader,
   CModalTitle,
   CAlert,
-  CBadge,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilPencil, cilTrash, cilPlus, cilWarning } from '@coreui/icons'
 
 const Sections = () => {
-  const [sections, setSections] = useState([
-    {
-      id: 1,
-      name: 'Basic Cooking - Group A', // Traducción: Cocina Básica - Grupo A
-      instructor: 'Chef John Doe',
-      maxStudents: 20,
-      enrolledStudents: 15,
-    },
-    {
-      id: 2,
-      name: 'Advanced Pastry - Group B', // Traducción: Repostería Avanzada - Grupo B
-      instructor: 'Chef Jane Smith',
-      maxStudents: 15,
-      enrolledStudents: 10,
-    },
-  ])
+  const [sections, setSections] = useState([])
+  const [instructors, setInstructors] = useState([])
+  const [classrooms, setClassrooms] = useState([])
   const [visibleDelete, setVisibleDelete] = useState(false)
   const [modalVisible, setModalVisible] = useState(false)
   const [editSection, setEditSection] = useState(null)
   const [formData, setFormData] = useState({
-    name: '',
-    instructor: '',
-    maxStudents: '',
+    subject_id: '',
+    chef_id: '',
+    classroom: '',
+    max_capacity: '',
   })
   const [errors, setErrors] = useState({})
   const [alertMessage, setAlertMessage] = useState('')
   const [selectedSection, setSelectedSection] = useState(null)
-  const instructors = ['Chef John Doe', 'Chef Jane Smith', 'Chef Bob Johnson']
+
+  // Fetch sections from localDB
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/sections')
+        if (!response.ok) {
+          throw new Error(`Failed to fetch sections: ${response.status} ${response.statusText}`)
+        }
+        const data = await response.json()
+        setSections(data)
+      } catch (error) {
+        console.error('Error fetching sections:', error)
+        setAlertMessage('Failed to load sections.')
+      }
+    }
+
+    fetchSections()
+  }, [])
+
+  // Fetch instructors from localDB
+  useEffect(() => {
+    const fetchInstructors = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/users')
+        if (!response.ok) {
+          throw new Error(`Failed to fetch users: ${response.status} ${response.statusText}`)
+        }
+        const users = await response.json()
+        const instr = users.filter((user) => user.role_id === 2) // Filtra solo los instructores
+        setInstructors(instr)
+      } catch (error) {
+        console.error('Error fetching instructors:', error)
+        setAlertMessage('Failed to load instructors.')
+      }
+    }
+
+    fetchInstructors()
+  }, [])
+
+  // Fetch classrooms from localDB
+  useEffect(() => {
+    const fetchClassrooms = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/classrooms')
+        if (!response.ok) {
+          throw new Error(`Failed to fetch classrooms: ${response.status} ${response.statusText}`)
+        }
+        const data = await response.json()
+        setClassrooms(data)
+      } catch (error) {
+        console.error('Error fetching classrooms:', error)
+        setAlertMessage('Failed to load classrooms.')
+      }
+    }
+
+    fetchClassrooms()
+  }, [])
 
   const validate = () => {
     const newErrors = {}
-    if (!formData.name) newErrors.name = 'The section name is required.' // Traducción: El nombre de la sección es obligatorio.
-    if (!formData.instructor) newErrors.instructor = 'You must select an instructor.' // Traducción: Debe seleccionar un instructor.
-    if (!formData.maxStudents || isNaN(formData.maxStudents) || formData.maxStudents <= 0) {
-      newErrors.maxStudents = 'You must enter a valid number for the maximum capacity.' // Traducción: Debe ingresar un número válido para el cupo máximo.
+    if (!formData.subject_id) newErrors.subject_id = 'The subject is required.'
+    if (!formData.chef_id) newErrors.chef_id = 'You must select an instructor.'
+    if (!formData.classroom) newErrors.classroom = 'You must select a classroom.'
+    if (!formData.max_capacity || isNaN(formData.max_capacity) || formData.max_capacity <= 0) {
+      newErrors.max_capacity = 'You must enter a valid number for the maximum capacity.'
     }
     return newErrors
   }
-  const handleConfirmDelete = async () => {
-    try {
-      const response = await fetch(`http://localhost:3000/sections/${selectedSection.id}`, {
-        method: 'DELETE',
-      })
-      if (!response.ok) {
-        throw new Error('Error deleting user')
-      }
 
-      alert('User deleted successfully!')
-      setVisibleDelete(false)
-      fetchReports()
-    } catch (error) {
-      console.error('An error occurred while deleting the user.', error)
-    }
-  }
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
-  }
-  const classrooms = [
-    { id: 1, name: 'Room 1', status: 'occupied' },
-    { id: 2, name: 'Room 2', status: 'free' },
-    { id: 3, name: 'Room 3', status: 'occupied' },
-    { id: 4, name: 'Room 4', status: 'free' },
-    { id: 5, name: 'Room 5', status: 'occupied' },
-    { id: 6, name: 'Room 6', status: 'free' },
-  ]
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const validationErrors = validate()
     if (Object.keys(validationErrors).length > 0) {
@@ -103,38 +121,68 @@ const Sections = () => {
       return
     }
     setErrors({})
-    if (editSection) {
-      setSections(
-        sections.map((section) =>
-          section.id === editSection.id ? { ...editSection, ...formData } : section,
-        ),
-      )
-      setAlertMessage('Section updated successfully.') // Traducción: Sección actualizada con éxito.
-    } else {
-      setSections([
-        ...sections,
-        { id: sections.length + 1, ...formData, enrolledStudents: 0 },
-      ])
-      setAlertMessage('Section created successfully.') // Traducción: Sección creada con éxito.
+
+    try {
+      if (editSection) {
+        // Update section
+        const response = await fetch(`http://localhost:5000/sections/${editSection.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        })
+        if (!response.ok) {
+          throw new Error('Failed to update section.')
+        }
+        setAlertMessage('Section updated successfully.')
+      } else {
+        // Create new section
+        const response = await fetch('http://localhost:5000/sections', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        })
+        if (!response.ok) {
+          throw new Error('Failed to create section.')
+        }
+        setAlertMessage('Section created successfully.')
+      }
+      setModalVisible(false)
+      setEditSection(null)
+      setFormData({ subject_id: '', chef_id: '', classroom: '', max_capacity: '' })
+    } catch (error) {
+      console.error('Error saving section:', error)
+      setAlertMessage('Failed to save section.')
     }
-    setModalVisible(false)
-    setEditSection(null)
-    setFormData({ name: '', instructor: '', maxStudents: '' })
   }
 
   const handleEdit = (section) => {
     setEditSection(section)
     setFormData({
-      name: section.name,
-      instructor: section.instructor,
-      maxStudents: section.maxStudents,
+      subject_id: section.subject_id,
+      chef_id: section.chef_id,
+      classroom: section.classroom,
+      max_capacity: section.max_capacity,
     })
     setModalVisible(true)
   }
 
-  const handleDelete = (id) => {
-    setSelectedSection(id)
-    setVisibleDelete(true)
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/sections/${id}`, { method: 'DELETE' })
+      if (!response.ok) {
+        throw new Error('Failed to delete section.')
+      }
+      setAlertMessage('Section deleted successfully.')
+      setSections(sections.filter((section) => section.id !== id))
+    } catch (error) {
+      console.error('Error deleting section:', error)
+      setAlertMessage('Failed to delete section.')
+    }
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
   }
 
   return (
@@ -143,12 +191,12 @@ const Sections = () => {
         <CCardHeader>
           <CRow>
             <CCol>
-              <h5>Section Management</h5> {/* Traducción: Gestión de Secciones */}
+              <h5>Section Management</h5>
             </CCol>
             <CCol className="text-end">
               <CButton color="success" onClick={() => setModalVisible(true)}>
                 <CIcon icon={cilPlus} className="me-2" />
-                Create Section {/* Traducción: Crear Sección */}
+                Create Section
               </CButton>
             </CCol>
           </CRow>
@@ -164,21 +212,23 @@ const Sections = () => {
             <CTableHead>
               <CTableRow>
                 <CTableHeaderCell>#</CTableHeaderCell>
-                <CTableHeaderCell>Nombre</CTableHeaderCell>
+                <CTableHeaderCell>Subject</CTableHeaderCell>
                 <CTableHeaderCell>Instructor</CTableHeaderCell>
-                <CTableHeaderCell>Cupo Máximo</CTableHeaderCell>
-                <CTableHeaderCell>Estudiantes Inscritos</CTableHeaderCell>
-                <CTableHeaderCell>Acciones</CTableHeaderCell>
+                <CTableHeaderCell>Classroom</CTableHeaderCell>
+                <CTableHeaderCell>Max Capacity</CTableHeaderCell>
+                <CTableHeaderCell>Actions</CTableHeaderCell>
               </CTableRow>
             </CTableHead>
             <CTableBody>
               {sections.map((section) => (
                 <CTableRow key={section.id}>
                   <CTableDataCell>{section.id}</CTableDataCell>
-                  <CTableDataCell>{section.name}</CTableDataCell>
-                  <CTableDataCell>{section.instructor}</CTableDataCell>
-                  <CTableDataCell>{section.maxStudents}</CTableDataCell>
-                  <CTableDataCell>{section.enrolledStudents}</CTableDataCell>
+                  <CTableDataCell>{section.subject_id}</CTableDataCell>
+                  <CTableDataCell>
+                    {instructors.find((instr) => instr.id === section.chef_id)?.first_name || 'N/A'}
+                  </CTableDataCell>
+                  <CTableDataCell>{section.classroom}</CTableDataCell>
+                  <CTableDataCell>{section.max_capacity}</CTableDataCell>
                   <CTableDataCell>
                     <CButton
                       color="primary"
@@ -188,7 +238,7 @@ const Sections = () => {
                     >
                       <CIcon icon={cilPencil} />
                     </CButton>
-                    <CButton color="danger" size="sm" onClick={handleDelete}>
+                    <CButton color="danger" size="sm" onClick={() => handleDelete(section.id)}>
                       <CIcon icon={cilTrash} />
                     </CButton>
                   </CTableDataCell>
@@ -199,92 +249,73 @@ const Sections = () => {
         </CCardBody>
       </CCard>
 
-      {/* Modal para Crear/Editar Sección */}
+      {/* Modal */}
       <CModal visible={modalVisible} onClose={() => setModalVisible(false)}>
         <CModalHeader>
-          <CModalTitle>{editSection ? 'Edit Section' : 'Create Section'}</CModalTitle> {/* Traducción: Editar Sección / Crear Sección */}
+          <CModalTitle>{editSection ? 'Edit Section' : 'Create Section'}</CModalTitle>
         </CModalHeader>
         <CModalBody>
           <CForm onSubmit={handleSubmit}>
-            <CFormLabel>Section Name</CFormLabel> {/* Traducción: Nombre de la Sección */}
+            <CFormLabel>Subject</CFormLabel>
             <CFormInput
               className="mb-3"
               type="text"
-              name="name"
-              value={formData.name}
+              name="subject_id"
+              value={formData.subject_id}
               onChange={handleChange}
-              invalid={!!errors.name}
+              invalid={!!errors.subject_id}
             />
-            {errors.name && <small className="text-danger">{errors.name}</small>}
-            <CFormLabel>Classroom</CFormLabel> {/* Traducción: Aula */}
+            {errors.subject_id && <small className="text-danger">{errors.subject_id}</small>}
+            <CFormLabel>Instructor</CFormLabel>
             <CFormSelect
               className="mb-3"
-              name="instructor"
-              value={classrooms.name}
+              name="chef_id"
+              value={formData.chef_id}
               onChange={handleChange}
-              invalid={!!errors.instructor}
+              invalid={!!errors.chef_id}
             >
-              <option value="">Select a classroom</option> {/* Traducción: Seleccione un aula */}
+              <option value="">Select an instructor</option>
+              {instructors.map((instr) => (
+                <option key={instr.id} value={instr.id}>
+                  {instr.first_name} {instr.last_name}
+                </option>
+              ))}
+            </CFormSelect>
+            {errors.chef_id && <small className="text-danger">{errors.chef_id}</small>}
+            <CFormLabel>Classroom</CFormLabel>
+            <CFormSelect
+              className="mb-3"
+              name="classroom"
+              value={formData.classroom}
+              onChange={handleChange}
+              invalid={!!errors.classroom}
+            >
+              <option value="">Select a classroom</option>
               {classrooms.map((classroom) => (
-                <option
-                  style={{
-                    color: classroom.status === 'occupied' ? '#FF0000' : '#90EE90',
-                  }}
-                  key={classroom.id}
-                  value={classroom.id}
-                >
+                <option key={classroom.id} value={classroom.name}>
                   {classroom.name}
                 </option>
               ))}
             </CFormSelect>
-            <CFormLabel>Instructor</CFormLabel> {/* Traducción: Instructor */}
-            <CFormSelect
-              className="mb-3"
-              name="instructor"
-              value={formData.instructor}
-              onChange={handleChange}
-              invalid={!!errors.instructor}
-            >
-              <option value="">Select an instructor</option> {/* Traducción: Seleccione un instructor */}
-              {instructors.map((instructor, index) => (
-                <option key={index} value={instructor}>
-                  {instructor}
-                </option>
-              ))}
-            </CFormSelect>
-            {errors.instructor && <small className="text-danger">{errors.instructor}</small>}
-
-            <CFormLabel>Maximum Capacity</CFormLabel> {/* Traducción: Cupo Máximo */}
+            {errors.classroom && <small className="text-danger">{errors.classroom}</small>}
+            <CFormLabel>Maximum Capacity</CFormLabel>
             <CFormInput
               className="mb-3"
               type="number"
-              name="maxStudents"
-              value={formData.maxStudents}
+              name="max_capacity"
+              value={formData.max_capacity}
               onChange={handleChange}
-              invalid={!!errors.maxStudents}
+              invalid={!!errors.max_capacity}
             />
-            {errors.maxStudents && <small className="text-danger">{errors.maxStudents}</small>}
+            {errors.max_capacity && <small className="text-danger">{errors.max_capacity}</small>}
           </CForm>
         </CModalBody>
-        <CModal visible={visibleDelete} onClose={() => setVisibleDelete(false)}>
-          <CModalBody>
-            <p>Are you sure you want to delete this user?</p>
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="secondary" onClick={() => setVisibleDelete(false)}>
-              Cancel
-            </CButton>
-            <CButton color="danger" onClick={handleConfirmDelete}>
-              Delete
-            </CButton>
-          </CModalFooter>
-        </CModal>
         <CModalFooter>
           <CButton color="secondary" onClick={() => setModalVisible(false)}>
-            Cancel {/* Traducción: Cancelar */}
+            Cancel
           </CButton>
           <CButton color="primary" onClick={handleSubmit}>
-            Save {/* Traducción: Guardar */}
+            Save
           </CButton>
         </CModalFooter>
       </CModal>
@@ -293,4 +324,3 @@ const Sections = () => {
 }
 
 export default Sections
-
