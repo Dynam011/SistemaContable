@@ -40,6 +40,14 @@ const Sections = () => {
     classroom: '',
     max_capacity: '',
   })
+  const [filteredSection, setFilteredSection] = useState([])
+  const [searchFilters, setSearchFilters] = useState({
+    id: '',
+    subject_id: '',
+    chef_id: '',
+    classroom: '',
+    max_capacity: '',
+  })
   const [errors, setErrors] = useState({})
   const [alertMessage, setAlertMessage] = useState('')
   const [selectedSection, setSelectedSection] = useState(null)
@@ -54,6 +62,8 @@ const Sections = () => {
         }
         const data = await response.json()
         setSections(data)
+        console.log('Sections:', data)
+        setFilteredSection(data) 
       } catch (error) {
         console.error('Error fetching sections:', error)
         setAlertMessage('Failed to load sections.')
@@ -113,6 +123,28 @@ const Sections = () => {
     return newErrors
   }
 
+  useEffect(() => {
+    const filtered = sections.filter((section) => {
+      return (
+        (searchFilters.id === '' || section.id.toString().includes(searchFilters.id)) &&
+        (searchFilters.classroom === '' ||
+          section.classroom.toLowerCase().includes(searchFilters.classroom.toLowerCase())) &&
+        (searchFilters.max_capacity === '' ||
+          section.max_capacity.toString().includes(searchFilters.max_capacity)) &&
+        (searchFilters.chef_id === '' ||
+          section.chef_id.toString().includes(searchFilters.chef_id)) &&
+        (searchFilters.subject_id === '' ||
+          section.subject_id.toString().includes(searchFilters.subject_id))
+      )
+    })
+    setFilteredSection(filtered)
+  }, [searchFilters, sections])
+
+  const handleSearchChange = (e) => {
+    const { name, value } = e.target
+    setSearchFilters({ ...searchFilters, [name]: value })
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const validationErrors = validate()
@@ -123,32 +155,47 @@ const Sections = () => {
     setErrors({})
 
     try {
-      if (editSection) {
-        // Update section
-        const response = await fetch(`http://localhost:5000/sections/${editSection.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        })
-        if (!response.ok) {
-          throw new Error('Failed to update section.')
-        }
-        setAlertMessage('Section updated successfully.')
-      } else {
-        // Create new section
-        const response = await fetch('http://localhost:5000/sections', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        })
-        if (!response.ok) {
-          throw new Error('Failed to create section.')
-        }
-        setAlertMessage('Section created successfully.')
+      const method = editSection ? 'PUT' : 'POST'
+      const url = editSection
+        ? `http://localhost:5000/sections/${editSection.id}`
+        : 'http://localhost:5000/sections'
+
+      // Generar un ID único e incremental si es una nueva sección
+      if (!editSection) {
+        const maxId = sections.reduce((max, section) => Math.max(max, parseInt(section.id, 10)), 0)
+        formData.id = (maxId + 1).toString()
       }
-      setModalVisible(false)
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        throw new Error(editSection ? 'Failed to update section' : 'Failed to create section')
+      }
+
+      const section = await response.json()
+
+      if (editSection) {
+        // Actualiza la sección en la lista
+        setSections(sections.map((s) => (s.id === section.id ? section : s)))
+        setModalVisible(false)
+      } else {
+        // Añade la nueva sección a la lista
+        setSections([...sections, section])
+        setModalVisible(false)
+      }
+
+      // Limpia el formulario y el estado seleccionado
       setEditSection(null)
-      setFormData({ subject_id: '', chef_id: '', classroom: '', max_capacity: '' })
+      setFormData({
+        subject_id: '',
+        chef_id: '',
+        classroom: '',
+        max_capacity: '',
+      })
     } catch (error) {
       console.error('Error saving section:', error)
       setAlertMessage('Failed to save section.')
@@ -166,18 +213,27 @@ const Sections = () => {
     setModalVisible(true)
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/sections/${id}`, { method: 'DELETE' })
+      const response = await fetch(`http://localhost:5000/sections/${selectedSection.id}`, {
+        method: 'DELETE',
+      })
       if (!response.ok) {
-        throw new Error('Failed to delete section.')
+        throw new Error('Failed to delete section')
       }
+      setSections(sections.filter((section) => section.id !== selectedSection.id))
+      setVisibleDelete(false)
+      setSelectedSection(null)
       setAlertMessage('Section deleted successfully.')
-      setSections(sections.filter((section) => section.id !== id))
     } catch (error) {
       console.error('Error deleting section:', error)
       setAlertMessage('Failed to delete section.')
     }
+  }
+
+  const confirmDelete = (section) => {
+    setSelectedSection(section)
+    setVisibleDelete(true)
   }
 
   const handleChange = (e) => {
@@ -193,21 +249,77 @@ const Sections = () => {
             <CCol>
               <h5>Section Management</h5>
             </CCol>
-            <CCol className="text-end">
-              <CButton color="success" onClick={() => setModalVisible(true)}>
-                <CIcon icon={cilPlus} className="me-2" />
-                Create Section
-              </CButton>
-            </CCol>
+            
           </CRow>
         </CCardHeader>
         <CCardBody>
+          
           {alertMessage && (
             <CAlert color="success" className="d-flex align-items-center">
               <CIcon icon={cilWarning} className="me-2" />
               {alertMessage}
             </CAlert>
           )}
+          <CContainer>
+              <CRow>
+                <CCol sm="auto">
+                  <CFormInput
+                    type="text"
+                    placeholder="Search by ID"
+                    name="id"
+                    value={searchFilters.id}
+                    onChange={handleSearchChange}
+                    className="me-2"
+                  />
+                </CCol>
+                <CCol sm="auto">
+                  <CFormInput
+                    type="text"
+                    placeholder="Search by Classroom"
+                    name="classroom"
+                    value={searchFilters.classroom}
+                    onChange={handleSearchChange}
+                    className="me-2"
+                  />
+                </CCol>
+                <CCol sm="auto">
+                  <CFormInput
+                    type="text"
+                    placeholder="Search by Capacity"
+                    name="max_capacity"
+                    value={searchFilters.max_capacity}
+                    onChange={handleSearchChange}
+                    className="me-2"
+                  />
+                </CCol>
+                <CCol sm="auto">
+                  <CFormInput
+                    type="text"
+                    placeholder="Search by Subject ID"
+                    name="subject_id"
+                    value={searchFilters.subject_id}
+                    onChange={handleSearchChange}
+                    className="me-2"
+                  />
+                </CCol>
+                <CCol sm="auto">
+                  <CFormInput
+                    type="text"
+                    placeholder="Search by Chef ID"
+                    name="chef_id"
+                    value={searchFilters.chef_id}
+                    onChange={handleSearchChange}
+                    className="me-2"
+                  />
+                </CCol>
+              </CRow>
+            </CContainer>
+            <CCol className="text-end">
+              <CButton color="success" onClick={() => setModalVisible(true)}>
+                <CIcon icon={cilPlus} className="me-2" />
+                Create Section
+              </CButton>
+            </CCol>
           <CTable hover responsive>
             <CTableHead>
               <CTableRow>
@@ -220,12 +332,12 @@ const Sections = () => {
               </CTableRow>
             </CTableHead>
             <CTableBody>
-              {sections.map((section) => (
+              {instructors && sections.map((section) => (
                 <CTableRow key={section.id}>
                   <CTableDataCell>{section.id}</CTableDataCell>
                   <CTableDataCell>{section.subject_id}</CTableDataCell>
                   <CTableDataCell>
-                    {instructors.find((instr) => instr.id === section.chef_id)?.first_name || 'N/A'}
+                    {instructors && instructors.find((instr) => instr.id == section.chef_id)?.first_name || 'N/A'}
                   </CTableDataCell>
                   <CTableDataCell>{section.classroom}</CTableDataCell>
                   <CTableDataCell>{section.max_capacity}</CTableDataCell>
@@ -238,7 +350,11 @@ const Sections = () => {
                     >
                       <CIcon icon={cilPencil} />
                     </CButton>
-                    <CButton color="danger" size="sm" onClick={() => handleDelete(section.id)}>
+                    <CButton
+                      color="danger"
+                      size="sm"
+                      onClick={() => confirmDelete(section)}
+                    >
                       <CIcon icon={cilTrash} />
                     </CButton>
                   </CTableDataCell>
@@ -316,6 +432,24 @@ const Sections = () => {
           </CButton>
           <CButton color="primary" onClick={handleSubmit}>
             Save
+          </CButton>
+        </CModalFooter>
+      </CModal>
+
+      {/* Modal de Confirmación para Eliminar */}
+      <CModal visible={visibleDelete} onClose={() => setVisibleDelete(false)}>
+        <CModalHeader>
+          <CModalTitle>Confirm Delete</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <p>Are you sure you want to delete the section <strong>{selectedSection?.subject_id}</strong>?</p>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisibleDelete(false)}>
+            Cancel
+          </CButton>
+          <CButton color="danger" onClick={handleDelete}>
+            Delete
           </CButton>
         </CModalFooter>
       </CModal>

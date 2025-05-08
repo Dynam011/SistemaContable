@@ -4,196 +4,197 @@ import {
   CButton,
   CCardBody,
   CCardHeader,
-  CCol,
   CForm,
   CFormInput,
-  CRow,
+  CFormSelect,
+  CCol,
   CTable,
+  CTableBody,
   CTableDataCell,
   CTableHead,
   CTableRow,
   CTableHeaderCell,
-  CTableBody,
+  CRow,
+  CContainer,
   CModal,
   CModalBody,
   CModalFooter,
   CModalHeader,
   CModalTitle,
-  CFormSelect,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPencil, cilTrash, cilPlus, cilWarning } from '@coreui/icons'
-export const UserList = (onUserAdded) => {
-  const [filterName, setFilterName] = useState('')
-  const [filterId, setFilterId] = useState('')
-  const [filterRole, setFilterRole] = useState('Show all')
-  const [filterPhone, setFilterPhone] = useState('')
-  const [filterStatus, setFilterStatus] = useState('Show all') // 
+import { cilPencil, cilTrash, cilPlus } from '@coreui/icons'
+
+const UserList = () => {
+  const [users, setUsers] = useState([])
+  const [filteredUsers, setFilteredUsers] = useState([])
+  const [searchFilters, setSearchFilters] = useState({
+    id: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    role_id: '',
+  })
   const [visibleAdd, setVisibleAdd] = useState(false)
   const [visibleEdit, setVisibleEdit] = useState(false)
   const [visibleDelete, setVisibleDelete] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [users1, setusers] = useState([ {
-    id: 1,
-    first_name: 'Xavier',
-    last_name: 'Castellanos',
-    email: 'xaviercastellanos@example.com',
-    password: 'password123',
-    phone: '+58 4142341567',
-    role_id: 'Admin',
-    status: 'Active',
-  },
-  {
-    id: 2,
-    first_name: 'Jesus',
-    last_name: 'Smith',
-    email: 'jesus.smioth@example.com',
-    password: 'password456',
-    phone: '+58 4142341567',
-    role_id: 'Chef',
-    status: 'Inactive',
-  },
-  {
-    id: 3,
-    first_name: 'Bob',
-    last_name: 'Johnson',
-    email: 'bob.johnson@example.com',
-    password: 'password789',
-    phone: '+1 555 555 555',
-    role_id: 'Estudiante',
-    status: 'Active',
-  },])
-  const [id, setId] = useState('')
-  const [first_name, setFirtsName] = useState('')
-  const [last_name, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [phone, setPhone] = useState('')
-  const [role_id, setRole_id] = useState('')
-  const [status, setStatus] = useState('')
-
-  const filteredUsers = users1.filter((user) => {
-    return (
-      user.first_name.toLowerCase().includes(filterName.toLowerCase()) &&
-      user.id.toString().includes(filterId) &&
-      (filterRole === 'Show all' || user.role_id === filterRole) &&
-      user.phone.includes(filterPhone) &&
-      (filterStatus === 'Show all' || user.status === filterStatus) 
-    )
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    phone: '',
+    email: '',
+    role_id: '',
+    status: '',
   })
 
+  // Fetch users from localDB
   useEffect(() => {
-    fetchReports()
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/users')
+        if (!response.ok) {
+          throw new Error('Failed to fetch users')
+        }
+        const data = await response.json()
+        setUsers(data)
+        setFilteredUsers(data) // Inicializa la lista filtrada con todos los usuarios
+      } catch (error) {
+        console.error('Error fetching users:', error)
+      }
+    }
+
+    fetchUsers()
   }, [])
 
-  const fetchReports = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/users')
-      const data = await response.json()
-      setusers(data)
-    } catch (error) {
-      console.error('An error occurred while fetching users.', error)
-    }
+  // Filtrar usuarios en tiempo real
+  useEffect(() => {
+    const filtered = users.filter((user) => {
+      return (
+        (searchFilters.id === '' || user.id.toString().includes(searchFilters.id)) &&
+        (searchFilters.first_name === '' ||
+          user.first_name.toLowerCase().includes(searchFilters.first_name.toLowerCase())) &&
+        (searchFilters.last_name === '' ||
+          user.last_name.toLowerCase().includes(searchFilters.last_name.toLowerCase())) &&
+        (searchFilters.email === '' ||
+          user.email.toLowerCase().includes(searchFilters.email.toLowerCase())) &&
+        (searchFilters.role_id === '' || user.role_id.toString() === searchFilters.role_id)
+      )
+    })
+    setFilteredUsers(filtered)
+  }, [searchFilters, users])
+
+  const handleSearchChange = (e) => {
+    const { name, value } = e.target
+    setSearchFilters({ ...searchFilters, [name]: value })
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData({ ...formData, [name]: value })
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await fetch('http://localhost:5000/users', {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          id, first_name, last_name, email, password, phone, role_id, status
-        }),
-      })
-      if (!response.ok) {
-        throw new Error('Server response error')
+      const method = selectedUser ? 'PUT' : 'POST' // Determina si es una creación o edición
+      const url = selectedUser
+        ? `http://localhost:5000/users/${selectedUser.id}`
+        : 'http://localhost:5000/users'
+
+      // Generar un ID único e incremental si es un nuevo usuario
+      if (!selectedUser) {
+        const maxId = users.reduce((max, user) => Math.max(max, parseInt(user.id, 10)), 0)
+        formData.id = (maxId + 1).toString()
       }
 
-      const newuser = await response.json()
-      setId('')
-      setFirtsName('')
-      setLastName('')
-      setEmail('')
-      setPassword('')
-      setPhone('')
-      setRole_id('')
-      setStatus('')
-      
-      alert('User added successfully!')
-      if (onUserAdded) {
-        onUserAdded(newuser)
+      // Asegurar que el campo `status` tenga un valor predeterminado
+      if (!formData.status) {
+        formData.status = 'active'
       }
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        throw new Error(selectedUser ? 'Failed to update user' : 'Failed to add user')
+      }
+
+      const user = await response.json()
+
+      if (selectedUser) {
+        // Actualiza el usuario en la lista
+        setUsers(users.map((u) => (u.id === user.id ? user : u)))
+        setVisibleEdit(false)
+      } else {
+        // Añade el nuevo usuario a la lista
+        setUsers([...users, user])
+        setVisibleAdd(false)
+      }
+
+      // Limpia el formulario y el estado seleccionado
+      setSelectedUser(null)
+      setFormData({
+        first_name: '',
+        last_name: '',
+        phone: '',
+        email: '',
+        role_id: '',
+        status: '',
+      })
     } catch (error) {
-      console.error('An error occurred while adding the user. Please try again.', error)
+      console.error('Error saving user:', error)
     }
   }
 
-  const handleEdit = async (user) => {
+  const handleEdit = (user) => {
     setSelectedUser(user)
-    setId(user.id)
-    setFirtsName(user.first_name)
-    setLastName(user.last_name)
-    setEmail(user.email)
-    setPhone(user.phone)
-    setRole_id(user.role_id)
-    setStatus(user.status) 
+    setFormData({
+      first_name: user.first_name,
+      last_name: user.last_name,
+      phone: user.phone,
+      email: user.email,
+      role_id: user.role_id,
+      status: user.status,
+    })
     setVisibleEdit(true)
   }
 
-  const handleDelete = async (user) => {
-    setSelectedUser(user)
-    setVisibleDelete(true)
+  const handleAdd = () => {
+    setSelectedUser(null)
+    setFormData({
+      first_name: '',
+      last_name: '',
+      phone: '',
+      email: '',
+      role_id: '',
+      status: '',
+    })
+    setVisibleAdd(true)
   }
 
-  const handleUpdate = async () => {
-    try {
-      const response = await fetch(`http://localhost:5000/users/${selectedUser.id}`, {
-        method: 'PUT',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: selectedUser.id,
-          first_name,
-          last_name,
-          email,
-          password,
-          phone,
-          role_id,
-          status,
-        }),
-      })
-      if (!response.ok) {
-        throw new Error('Error updating user')
-      }
-
-      const updatedUser = await response.json()
-      alert('User updated successfully!')
-      setVisibleEdit(false)
-      fetchReports()
-    } catch (error) {
-      console.error('An error occurred while updating the user.', error)
-    }
-  }
-
-  const handleConfirmDelete = async () => {
+  const handleDelete = async () => {
     try {
       const response = await fetch(`http://localhost:5000/users/${selectedUser.id}`, {
         method: 'DELETE',
       })
       if (!response.ok) {
-        throw new Error('Error deleting user')
+        throw new Error('Failed to delete user')
       }
-
-      alert('User deleted successfully!')
+      setUsers(users.filter((user) => user.id !== selectedUser.id))
       setVisibleDelete(false)
-      fetchReports()
+      setSelectedUser(null)
     } catch (error) {
-      console.error('An error occurred while deleting the user.', error)
+      console.error('Error deleting user:', error)
     }
+  }
+
+  const confirmDelete = (user) => {
+    setSelectedUser(user)
+    setVisibleDelete(true)
   }
 
   return (
@@ -202,60 +203,68 @@ export const UserList = (onUserAdded) => {
         <h4 className="mb-0">Users</h4>
       </CCardHeader>
       <CCardBody>
-        <CForm className="mb-4">
-          <CRow className="g-3">
-            <CCol md={3}>
+        <CContainer>
+          <CRow>
+            <CCol sm="auto">
               <CFormInput
                 type="text"
-                placeholder="Filter by Name"
-                value={filterName}
-                onChange={(e) => setFilterName(e.target.value)}
+                placeholder="Search by ID"
+                name="id"
+                value={searchFilters.id}
+                onChange={handleSearchChange}
+                className="me-2"
               />
             </CCol>
-            <CCol md={3}>
-              <CFormInput
-                type="number"
-                placeholder="Filter by ID"
-                value={filterId}
-                onChange={(e) => setFilterId(e.target.value)}
-              />
-            </CCol>
-            <CCol md={3}>
-              <CFormSelect
-                value={filterRole}
-                onChange={(e) => setFilterRole(e.target.value)}
-              >
-                <option value="Show all">Filter by Role</option>
-                <option value="Admin">Admin</option>
-                <option value="Chef">Chef</option>
-                <option value="Estudiante">Estudiante</option>
-              </CFormSelect>
-            </CCol>
-            <CCol md={3}>
+            <CCol sm="auto">
               <CFormInput
                 type="text"
-                placeholder="Filter by Phone"
-                value={filterPhone}
-                onChange={(e) => setFilterPhone(e.target.value)}
+                placeholder="Search by First Name"
+                name="first_name"
+                value={searchFilters.first_name}
+                onChange={handleSearchChange}
+                className="me-2"
               />
             </CCol>
-            <CCol md={3}>
-              <CFormSelect
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)} 
-              >
-                <option value="Show all">Filter by Status</option>
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </CFormSelect>
+            <CCol sm="auto">
+              <CFormInput
+                type="text"
+                placeholder="Search by Last Name"
+                name="last_name"
+                value={searchFilters.last_name}
+                onChange={handleSearchChange}
+                className="me-2"
+              />
             </CCol>
-            <CCol md={3}>
-              <CButton color="info" style={{ color: 'white' }} onClick={() => setVisibleAdd(true)}>
-                Add User
-              </CButton>
+            <CCol sm="auto">
+              <CFormInput
+                type="text"
+                placeholder="Search by Email"
+                name="email"
+                value={searchFilters.email}
+                onChange={handleSearchChange}
+                className="me-2"
+              />
+            </CCol>
+            <CCol sm="auto">
+              <CFormSelect
+                name="role_id"
+                value={searchFilters.role_id}
+                onChange={handleSearchChange}
+                className="me-2"
+              >
+                <option value="">Filter by Role</option>
+                <option value="1">Admin</option>
+                <option value="2">Chef</option>
+                <option value="3">Student</option>
+              </CFormSelect>
             </CCol>
           </CRow>
-        </CForm>
+        </CContainer>
+
+        <CButton color="success" onClick={handleAdd}>
+          <CIcon icon={cilPlus} className="me-2" />
+          Add User
+        </CButton>
 
         <CTable hover responsive className="mt-4">
           <CTableHead>
@@ -264,21 +273,19 @@ export const UserList = (onUserAdded) => {
               <CTableHeaderCell>First Name</CTableHeaderCell>
               <CTableHeaderCell>Last Name</CTableHeaderCell>
               <CTableHeaderCell>Email</CTableHeaderCell>
-              <CTableHeaderCell>Password</CTableHeaderCell>
               <CTableHeaderCell>Phone</CTableHeaderCell>
-              <CTableHeaderCell>Role ID</CTableHeaderCell>
+              <CTableHeaderCell>Role</CTableHeaderCell>
               <CTableHeaderCell>Status</CTableHeaderCell>
               <CTableHeaderCell>Actions</CTableHeaderCell>
             </CTableRow>
           </CTableHead>
           <CTableBody>
-            {filteredUsers.map((user, index) => (
-              <CTableRow key={index}>
+            {filteredUsers.map((user) => (
+              <CTableRow key={user.id}>
                 <CTableDataCell>{user.id}</CTableDataCell>
                 <CTableDataCell>{user.first_name}</CTableDataCell>
                 <CTableDataCell>{user.last_name}</CTableDataCell>
                 <CTableDataCell>{user.email}</CTableDataCell>
-                <CTableDataCell>{user.password}</CTableDataCell>
                 <CTableDataCell>{user.phone}</CTableDataCell>
                 <CTableDataCell>{user.role_id}</CTableDataCell>
                 <CTableDataCell>{user.status}</CTableDataCell>
@@ -292,11 +299,11 @@ export const UserList = (onUserAdded) => {
                     <CIcon icon={cilPencil} />
                   </CButton>
                   <CButton
-                      color="danger"
-                      size="sm"
-                    onClick={() => handleDelete(user)}
+                    color="danger"
+                    size="sm"
+                    onClick={() => confirmDelete(user)}
                   >
-        <CIcon icon={cilTrash} />
+                    <CIcon icon={cilTrash} />
                   </CButton>
                 </CTableDataCell>
               </CTableRow>
@@ -304,73 +311,66 @@ export const UserList = (onUserAdded) => {
           </CTableBody>
         </CTable>
 
-       
-        <CModal visible={visibleAdd} onClose={() => setVisibleAdd(false)}>
+        {/* Modal para Añadir/Editar Usuario */}
+        <CModal visible={visibleAdd || visibleEdit} onClose={() => setVisibleAdd(false) || setVisibleEdit(false)}>
           <CForm onSubmit={handleSubmit}>
             <CModalHeader>
-              <CModalTitle>Add User</CModalTitle>
+              <CModalTitle>{selectedUser ? 'Edit User' : 'Add User'}</CModalTitle>
             </CModalHeader>
             <CModalBody>
               <CFormInput
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                label="ID"
-                required
-              />
-              <CFormInput
-                value={first_name}
-                onChange={(e) => setFirtsName(e.target.value)}
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleChange}
                 label="First Name"
                 required
               />
               <CFormInput
-                value={last_name}
-                onChange={(e) => setLastName(e.target.value)}
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleChange}
                 label="Last Name"
                 required
               />
               <CFormInput
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 label="Email"
                 required
               />
               <CFormInput
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                label="Password"
-                type="password"
-                required
-              />
-              <CFormInput
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
                 label="Phone"
                 required
               />
               <CFormSelect
-                value={role_id}
-                onChange={(e) => setRole_id(e.target.value)}
+                name="role_id"
+                value={formData.role_id}
+                onChange={handleChange}
                 label="Role"
                 required
               >
                 <option value="">Select Role</option>
-                <option value="Admin">Admin</option>
-                <option value="Chef">Chef</option>
-                <option value="Estudiante">Estudiante</option>
+                <option value="1">Admin</option>
+                <option value="2">Chef</option>
+                <option value="3">Student</option>
               </CFormSelect>
               <CFormSelect
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
                 label="Status"
                 required
               >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
               </CFormSelect>
             </CModalBody>
             <CModalFooter>
-              <CButton color="secondary" onClick={() => setVisibleAdd(false)}>
+              <CButton color="secondary" onClick={() => setVisibleAdd(false) || setVisibleEdit(false)}>
                 Close
               </CButton>
               <CButton color="primary" type="submit">
@@ -380,83 +380,19 @@ export const UserList = (onUserAdded) => {
           </CForm>
         </CModal>
 
-        
-        <CModal visible={visibleEdit} onClose={() => setVisibleEdit(false)}>
-          <CForm onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
-            <CModalHeader>
-              <CModalTitle>Edit User</CModalTitle>
-            </CModalHeader>
-            <CModalBody>
-              <CFormInput
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                label="ID"
-                disabled
-              />
-              <CFormInput
-                value={first_name}
-                onChange={(e) => setFirtsName(e.target.value)}
-                label="First Name"
-              />
-              <CFormInput
-                value={last_name}
-                onChange={(e) => setLastName(e.target.value)}
-                label="Last Name"
-              />
-              <CFormInput
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                label="Email"
-              />
-              <CFormInput
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                label="Password"
-                type="password"
-              />
-              <CFormInput
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                label="Phone"
-              />
-              <CFormSelect
-                value={role_id}
-                onChange={(e) => setRole_id(e.target.value)}
-                label="Role"
-              >
-                <option value="Admin">Admin</option>
-                <option value="Chef">Chef</option>
-                <option value="Estudiante">Estudiante</option>
-              </CFormSelect>
-              <CFormSelect
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                label="Status"
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </CFormSelect>
-            </CModalBody>
-            <CModalFooter>
-              <CButton color="secondary" onClick={() => setVisibleEdit(false)}>
-                Close
-              </CButton>
-              <CButton color="primary" type="submit">
-                Save Changes
-              </CButton>
-            </CModalFooter>
-          </CForm>
-        </CModal>
-
+        {/* Modal de Confirmación para Eliminar */}
         <CModal visible={visibleDelete} onClose={() => setVisibleDelete(false)}>
+          <CModalHeader>
+            <CModalTitle>Confirm Delete</CModalTitle>
+          </CModalHeader>
           <CModalBody>
-            <p>Are you sure you want to delete this user?</p>
+            <p>Are you sure you want to delete the user <strong>{selectedUser?.first_name} {selectedUser?.last_name}</strong>?</p>
           </CModalBody>
           <CModalFooter>
             <CButton color="secondary" onClick={() => setVisibleDelete(false)}>
               Cancel
             </CButton>
-            <CButton color="danger" onClick={handleConfirmDelete}>
+            <CButton color="danger" onClick={handleDelete}>
               Delete
             </CButton>
           </CModalFooter>
@@ -465,7 +401,5 @@ export const UserList = (onUserAdded) => {
     </CCard>
   )
 }
-
-
 
 export default UserList

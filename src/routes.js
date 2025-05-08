@@ -7,7 +7,7 @@ const Profile = React.lazy(() => import('./views/user/Profile'))
 const Users = React.lazy(() => import('./views/user/Users'))
 const Sections = React.lazy(() => import('./views/sections/sections'))
 const Enrollment = React.lazy(() => import('./views/enrollments/enrollment'))
-
+const Programs = React.lazy(() => import('./views/programs/programs'))
 
 
 const routes = [
@@ -16,6 +16,7 @@ const routes = [
   { path: '/users', name: 'Users', element: Users },
   { path: '/profile', name: 'Profile', element: Profile },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  { path: '/programs', name: 'Programs', element: Programs },
   {path: '/enrollments', name: 'Enrollments', element: Enrollment},
   {path: '/sections', name: 'Sections', element: Sections},
 

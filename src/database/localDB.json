@@ -1,7 +1,7 @@
 {
   "sections": [
     {
-      "id": 1,
+      "id": "1",
       "subject_id": 101,
       "chef_id": 3,
       "classroom": "Room 1",
@@ -10,7 +10,7 @@
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "subject_id": 102,
       "chef_id": 2,
       "classroom": "Room 2",
@@ -19,16 +19,7 @@
       "updated_at": "2025-05-02T11:00:00Z"
     },
     {
-      "id": 3,
-      "subject_id": 103,
-      "chef_id": 2,
-      "classroom": "Room 3",
-      "max_capacity": 25,
-      "created_at": "2025-05-03T12:00:00Z",
-      "updated_at": "2025-05-03T12:00:00Z"
-    },
-    {
-      "id": 4,
+      "id": "4",
       "subject_id": 104,
       "chef_id": 3,
       "classroom": "Room 4",
@@ -37,7 +28,7 @@
       "updated_at": "2025-05-04T13:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "subject_id": 105,
       "chef_id": 2,
       "classroom": "Room 5",
@@ -48,21 +39,16 @@
   ],
   "users": [
     {
-      "id": 1,
-      "first_name": "John",
-      "last_name": "Doe",
+      "first_name": "Xavier",
+      "last_name": "Castellanos",
       "phone": "123-456-7890",
-      "address": "123 Main St, Springfield",
-      "birthdate": "1985-06-15",
       "email": "john.doe@example.com",
-      "password_hash": "hashed_password_1",
       "role_id": 1,
       "status": "active",
-      "created_at": "2025-05-01T10:00:00Z",
-      "updated_at": "2025-05-01T10:00:00Z"
+      "id": "1"
     },
     {
-      "id": 2,
+      "id": "2",
       "first_name": "Jane",
       "last_name": "Smith",
       "phone": "987-654-3210",
@@ -76,7 +62,7 @@
       "updated_at": "2025-05-02T11:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "first_name": "Alice",
       "last_name": "Johnson",
       "phone": "555-123-4567",
@@ -88,39 +74,48 @@
       "status": "inactive",
       "created_at": "2025-05-03T12:00:00Z",
       "updated_at": "2025-05-03T12:00:00Z"
+    },
+    {
+      "id": "NaN",
+      "first_name": "asd",
+      "last_name": "asd",
+      "phone": "asd",
+      "email": "asd",
+      "role_id": "1",
+      "status": "active"
     }
   ],
   "measurement_units": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Kilogram",
       "abbreviation": "kg",
       "created_at": "2025-05-01T10:00:00Z",
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Gram",
       "abbreviation": "g",
       "created_at": "2025-05-01T10:00:00Z",
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Liter",
       "abbreviation": "L",
       "created_at": "2025-05-01T10:00:00Z",
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Milliliter",
       "abbreviation": "mL",
       "created_at": "2025-05-01T10:00:00Z",
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Piece",
       "abbreviation": "pc",
       "created_at": "2025-05-01T10:00:00Z",
@@ -129,25 +124,25 @@
   ],
   "roles": [
     {
-      "id": 1,
+      "id": "1",
       "role_name": "Administrator",
       "created_at": "2025-05-01T10:00:00Z",
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "role_name": "Chef Instructor",
       "created_at": "2025-05-01T10:00:00Z",
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "role_name": "Student",
       "created_at": "2025-05-01T10:00:00Z",
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "role_name": "Guest",
       "created_at": "2025-05-01T10:00:00Z",
       "updated_at": "2025-05-01T10:00:00Z"
@@ -155,7 +150,7 @@
   ],
   "culinary_programs": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Professional Chef Program",
       "description": "A comprehensive program designed to train students in the fundamentals of culinary arts, including knife skills, cooking techniques, and kitchen management.",
       "duration_months": 12,
@@ -164,7 +159,7 @@
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Pastry and Baking Arts",
       "description": "This program focuses on the art of pastry and baking, teaching students how to create desserts, breads, and other baked goods.",
       "duration_months": 8,
@@ -173,7 +168,7 @@
       "updated_at": "2025-05-02T11:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Advanced Culinary Techniques",
       "description": "An advanced program for experienced cooks looking to refine their skills and learn modern culinary techniques.",
       "duration_months": 6,
@@ -182,7 +177,7 @@
       "updated_at": "2025-05-03T12:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Vegetarian and Vegan Cuisine",
       "description": "A specialized program focusing on plant-based cooking techniques and recipes for vegetarian and vegan diets.",
       "duration_months": 4,
@@ -191,7 +186,7 @@
       "updated_at": "2025-05-04T13:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "International Cuisine",
       "description": "Explore the flavors of the world with this program, which covers cuisines from various countries and regions.",
       "duration_months": 10,
@@ -202,7 +197,7 @@
   ],
   "schedules": [
     {
-      "id": 1,
+      "id": "1",
       "section_id": 1,
       "day_of_week": 1,
       "start_time": "08:00:00",
@@ -211,7 +206,7 @@
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "section_id": 1,
       "day_of_week": 3,
       "start_time": "08:00:00",
@@ -220,7 +215,7 @@
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "section_id": 2,
       "day_of_week": 2,
       "start_time": "13:00:00",
@@ -229,7 +224,7 @@
       "updated_at": "2025-05-02T11:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "section_id": 3,
       "day_of_week": 4,
       "start_time": "09:00:00",
@@ -238,7 +233,7 @@
       "updated_at": "2025-05-03T12:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "section_id": 4,
       "day_of_week": 5,
       "start_time": "14:00:00",
@@ -249,7 +244,7 @@
   ],
   "enrollments": [
     {
-      "id": 1,
+      "id": "1",
       "student_id": 1,
       "section_id": 1,
       "enrollment_date": "2025-05-01",
@@ -259,7 +254,7 @@
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "student_id": 2,
       "section_id": 1,
       "enrollment_date": "2025-05-02",
@@ -269,7 +264,7 @@
       "updated_at": "2025-05-02T11:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "student_id": 3,
       "section_id": 2,
       "enrollment_date": "2025-05-03",
@@ -279,7 +274,7 @@
       "updated_at": "2025-05-03T12:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "student_id": 1,
       "section_id": 3,
       "enrollment_date": "2025-05-04",
@@ -289,7 +284,7 @@
       "updated_at": "2025-05-04T13:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "student_id": 2,
       "section_id": 4,
       "enrollment_date": "2025-05-05",
@@ -301,79 +296,79 @@
   ],
   "assessments": [
     {
-      "id": 1,
+      "id": "1",
       "section_id": 1,
       "name": "Knife Skills Assessment",
       "description": "Evaluate students' proficiency in basic knife skills, including chopping, slicing, and dicing.",
       "due_date": "2025-05-10T12:00:00Z",
-      "max_score": 100.00,
+      "max_score": 100,
       "created_at": "2025-05-01T10:00:00Z",
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "section_id": 2,
       "name": "Pastry Techniques Exam",
       "description": "Test students' knowledge and skills in creating various pastries and baked goods.",
       "due_date": "2025-05-15T15:00:00Z",
-      "max_score": 100.00,
+      "max_score": 100,
       "created_at": "2025-05-02T11:00:00Z",
       "updated_at": "2025-05-02T11:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "section_id": 3,
       "name": "Advanced Cooking Techniques Test",
       "description": "Assess students' ability to execute advanced cooking techniques such as sous vide and molecular gastronomy.",
       "due_date": "2025-05-20T18:00:00Z",
-      "max_score": 100.00,
+      "max_score": 100,
       "created_at": "2025-05-03T12:00:00Z",
       "updated_at": "2025-05-03T12:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "section_id": 4,
       "name": "Plant-Based Cuisine Project",
       "description": "Students must create a complete plant-based menu, including appetizers, main courses, and desserts.",
       "due_date": "2025-05-25T20:00:00Z",
-      "max_score": 100.00,
+      "max_score": 100,
       "created_at": "2025-05-04T13:00:00Z",
       "updated_at": "2025-05-04T13:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "section_id": 5,
       "name": "International Cuisine Presentation",
       "description": "Students will present a dish from a selected international cuisine, explaining its cultural significance and preparation techniques.",
       "due_date": "2025-05-30T10:00:00Z",
-      "max_score": 100.00,
+      "max_score": 100,
       "created_at": "2025-05-05T14:00:00Z",
       "updated_at": "2025-05-05T14:00:00Z"
     }
   ],
   "grades": [
     {
-      "id": 1,
+      "id": "1",
       "assessment_id": 1,
       "student_id": 1,
-      "score": 95.50,
+      "score": 95.5,
       "feedback": "Excellent knife skills. Keep up the great work!",
       "graded_by": 2,
       "created_at": "2025-05-11T10:00:00Z",
       "updated_at": "2025-05-11T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "assessment_id": 1,
       "student_id": 2,
-      "score": 88.00,
+      "score": 88,
       "feedback": "Good performance, but work on consistency in slicing.",
       "graded_by": 2,
       "created_at": "2025-05-11T10:30:00Z",
       "updated_at": "2025-05-11T10:30:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "assessment_id": 2,
       "student_id": 3,
       "score": 78.25,
@@ -383,17 +378,17 @@
       "updated_at": "2025-05-16T12:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "assessment_id": 3,
       "student_id": 1,
-      "score": 92.00,
+      "score": 92,
       "feedback": "Great execution of advanced techniques. Well done!",
       "graded_by": 2,
       "created_at": "2025-05-21T14:00:00Z",
       "updated_at": "2025-05-21T14:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "assessment_id": 4,
       "student_id": 2,
       "score": 85.75,
@@ -405,7 +400,7 @@
   ],
   "inventory": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Flour",
       "type": "ingredient",
       "description": "All-purpose flour used for baking and cooking.",
@@ -419,7 +414,7 @@
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Sugar",
       "type": "ingredient",
       "description": "Granulated sugar for desserts and beverages.",
@@ -433,7 +428,7 @@
       "updated_at": "2025-05-02T11:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Chef's Knife",
       "type": "equipment",
       "description": "High-quality chef's knife for cutting and slicing.",
@@ -445,7 +440,7 @@
       "updated_at": "2025-05-03T12:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Stand Mixer",
       "type": "equipment",
       "description": "Electric stand mixer for dough and batter preparation.",
@@ -457,7 +452,7 @@
       "updated_at": "2025-05-04T13:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Milk",
       "type": "ingredient",
       "description": "Fresh whole milk for cooking and beverages.",
@@ -473,7 +468,7 @@
   ],
   "resources": [
     {
-      "id": 1,
+      "id": "1",
       "subject_id": 101,
       "title": "Knife Skills Guide",
       "type": "PDF",
@@ -483,7 +478,7 @@
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "subject_id": 102,
       "title": "Pastry Techniques Video",
       "type": "Video",
@@ -493,7 +488,7 @@
       "updated_at": "2025-05-02T11:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "subject_id": 103,
       "title": "Advanced Cooking Techniques Presentation",
       "type": "Presentation",
@@ -503,7 +498,7 @@
       "updated_at": "2025-05-03T12:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "subject_id": 104,
       "title": "Plant-Based Recipes eBook",
       "type": "eBook",
@@ -513,7 +508,7 @@
       "updated_at": "2025-05-04T13:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "subject_id": 105,
       "title": "International Cuisine Documentary",
       "type": "Documentary",
@@ -525,7 +520,7 @@
   ],
   "recipes": [
     {
-      "id": 1,
+      "id": "1",
       "resource_id": 1,
       "difficulty": "Easy",
       "preparation_time": 30,
@@ -534,7 +529,7 @@
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "resource_id": 2,
       "difficulty": "Medium",
       "preparation_time": 60,
@@ -543,7 +538,7 @@
       "updated_at": "2025-05-02T11:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "resource_id": 3,
       "difficulty": "Hard",
       "preparation_time": 120,
@@ -552,7 +547,7 @@
       "updated_at": "2025-05-03T12:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "resource_id": 4,
       "difficulty": "Easy",
       "preparation_time": 20,
@@ -561,7 +556,7 @@
       "updated_at": "2025-05-04T13:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "resource_id": 5,
       "difficulty": "Medium",
       "preparation_time": 90,
@@ -574,47 +569,52 @@
     {
       "recipe_id": 1,
       "inventory_id": 1,
-      "quantity": 200.00,
+      "quantity": 200,
       "unit_ingredient_id": 2,
       "created_at": "2025-05-01T10:00:00Z",
-      "updated_at": "2025-05-01T10:00:00Z"
+      "updated_at": "2025-05-01T10:00:00Z",
+      "id": "4c77"
     },
     {
       "recipe_id": 1,
       "inventory_id": 2,
-      "quantity": 100.00,
+      "quantity": 100,
       "unit_ingredient_id": 2,
       "created_at": "2025-05-01T10:00:00Z",
-      "updated_at": "2025-05-01T10:00:00Z"
+      "updated_at": "2025-05-01T10:00:00Z",
+      "id": "1678"
     },
     {
       "recipe_id": 2,
       "inventory_id": 1,
-      "quantity": 500.00,
+      "quantity": 500,
       "unit_ingredient_id": 2,
       "created_at": "2025-05-02T11:00:00Z",
-      "updated_at": "2025-05-02T11:00:00Z"
+      "updated_at": "2025-05-02T11:00:00Z",
+      "id": "4f50"
     },
     {
       "recipe_id": 3,
       "inventory_id": 3,
-      "quantity": 1.00,
+      "quantity": 1,
       "unit_ingredient_id": 5,
       "created_at": "2025-05-03T12:00:00Z",
-      "updated_at": "2025-05-03T12:00:00Z"
+      "updated_at": "2025-05-03T12:00:00Z",
+      "id": "f821"
     },
     {
       "recipe_id": 4,
       "inventory_id": 5,
-      "quantity": 500.00,
+      "quantity": 500,
       "unit_ingredient_id": 3,
       "created_at": "2025-05-04T13:00:00Z",
-      "updated_at": "2025-05-04T13:00:00Z"
+      "updated_at": "2025-05-04T13:00:00Z",
+      "id": "0a17"
     }
   ],
   "classrooms": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Room 1",
       "status": "occupied",
       "capacity": 20,
@@ -622,7 +622,7 @@
       "updated_at": "2025-05-01T10:00:00Z"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Room 2",
       "status": "free",
       "capacity": 15,
@@ -630,7 +630,7 @@
       "updated_at": "2025-05-02T11:00:00Z"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Room 3",
       "status": "occupied",
       "capacity": 25,
@@ -638,7 +638,7 @@
       "updated_at": "2025-05-03T12:00:00Z"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Room 4",
       "status": "free",
       "capacity": 30,
@@ -646,7 +646,7 @@
       "updated_at": "2025-05-04T13:00:00Z"
     },
     {
-      "id": 5,
+      "id": "5",
       "name": "Room 5",
       "status": "occupied",
       "capacity": 10,
@@ -654,5 +654,4 @@
       "updated_at": "2025-05-05T14:00:00Z"
     }
   ]
-  
 }
