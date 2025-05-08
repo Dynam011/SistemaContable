@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import {
   CCard,
   CButton,
@@ -12,7 +12,6 @@ import {
   CTableBody,
   CTableDataCell,
   CTableHead,
-  CTableRow,
   CTableHeaderCell,
   CRow,
   CContainer,
@@ -94,7 +93,7 @@ const UserList = () => {
     setFormData({ ...formData, [name]: value })
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmt = async (e) => {
     e.preventDefault()
     try {
       const method = selectedUser ? 'PUT' : 'POST' // Determina si es una creación o edición
@@ -178,7 +177,7 @@ const UserList = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/users/${selectedUser.id}`, {
+      const response = await fetch(`http://localhost:500/users/${selectedUser.id}`, {
         method: 'DELETE',
       })
       if (!response.ok) {

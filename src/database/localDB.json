@@ -86,16 +86,25 @@
       "status": "active"
     },
     {
-      "id": "7ea9",
-      "username": "Pote",
+      "first_name": "Pote",
+      "last_name": "Delgado",
+      "phone": "04144521256",
       "email": "pote@gmail.com",
-      "password_hash": "Pote123.*"
+      "role_id": "2",
+      "status": "active",
+      "id": "7ea9"
     },
     {
       "id": "f355",
       "username": "Jesus Delgado",
       "email": "jesusdelg7000@gmail.com",
       "password_hash": "Jesus7000.**"
+    },
+    {
+      "id": "94ca",
+      "username": "Carlos",
+      "email": "carlos@gmail.com",
+      "password_hash": "Carlos123.*"
     }
   ],
   "measurement_units": [

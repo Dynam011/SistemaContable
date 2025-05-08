@@ -50,7 +50,7 @@ const Login = () => {
   
       if (users.length > 0) {
         console.log('Inicio de sesión exitoso para:', users[0]);
-        // Aquí podrías guardar información del usuario o un token
+        // Aquí se podrá guardar información más adelante del token
         // localStorage.setItem('userId', users[0].id);
         window.location.href = '/dashboard'; // Redirigir a la página principal
       } else {
@@ -111,8 +111,7 @@ const Login = () => {
       body: JSON.stringify({
         username: registerUsername,
         email: registerEmail,
-        password_hash: registerPassword, // ¡Importante: En una app real, hashearías esto!
-        // Puedes agregar otros campos si tu estructura de usuario lo requiere
+        password_hash: registerPassword, 
       }),
     });
 
@@ -152,7 +151,7 @@ const handleForgotPassword = async () => {
         `Se ha enviado un código de restablecimiento a ${forgotPasswordEmail}. Por favor, verifica tu correo.`
       );
       setShowForgotPassword(false); // Volver al formulario de inicio de sesión
-      setForgotPasswordEmail(''); // Limpiar el campo de email
+      setForgotPasswordEmail(''); // Limpiar datos 
     } else {
       setEmailError('No se encontró ningún usuario con ese correo electrónico.');
     }

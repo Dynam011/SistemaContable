@@ -13,7 +13,6 @@ const Programs = React.lazy(() => import('./views/programs/programs'))
 const routes = [
 
   { path: '/', exact: true, name: 'Home' },
-  { path: '/users', name: 'Users', element: Users },
   { path: '/profile', name: 'Profile', element: Profile },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/programs', name: 'Programs', element: Programs },
