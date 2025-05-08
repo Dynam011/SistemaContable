@@ -43,6 +43,7 @@
       "last_name": "Castellanos",
       "phone": "123-456-7890",
       "email": "john.doe@example.com",
+      "password_hash": "hashed_password_19",
       "role_id": 1,
       "status": "active",
       "id": "1"
@@ -83,6 +84,18 @@
       "email": "asd",
       "role_id": "1",
       "status": "active"
+    },
+    {
+      "id": "7ea9",
+      "username": "Pote",
+      "email": "pote@gmail.com",
+      "password_hash": "Pote123.*"
+    },
+    {
+      "id": "f355",
+      "username": "Jesus Delgado",
+      "email": "jesusdelg7000@gmail.com",
+      "password_hash": "Jesus7000.**"
     }
   ],
   "measurement_units": [

@@ -35,79 +35,132 @@ const Login = () => {
     document.body.style.background = `url(${fondoLogin}) center center / cover no-repeat`;
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!loginUsername || !loginPassword) {
-      setLoginError('Please enter both username and password.');
+      setLoginError('Por favor, introduce email y contraseña.');
       return;
     }
     setLoginError('');
-    console.log('Logging in with:', loginUsername, loginPassword);
-    // Simulación de inicio de sesión
-    setTimeout(() => {
-      alert('Logged in successfully!');
-    }, 1000);
-  };
-
-  const handleRegister = () => {
-    if (!registerUsername || !registerEmail || !registerPassword) {
-      setRegisterError('Please fill in all fields.');
-      return;
-    }
-    if (!registerEmail.includes('@')) {
-      setRegisterError('Please enter a valid email.');
-      return;
-    }
-
-    // Validación de contraseña robusta
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    const passwordErrors = [];
-
-    if (registerPassword.length < 8) {
-      passwordErrors.push('At least 8 characters.');
-    }
-    if (!/(?=.*[a-z])/.test(registerPassword)) {
-      passwordErrors.push('At least one lowercase letter.');
-    }
-    if (!/(?=.*[A-Z])/.test(registerPassword)) {
-      passwordErrors.push('At least one uppercase letter.');
-    }
-    if (!/(?=.*\d)/.test(registerPassword)) {
-      passwordErrors.push('At least one number.');
-    }
-    if (!/(?=.*[@$!%*?&])/.test(registerPassword)) {
-      passwordErrors.push('At least one special character.');
-    }
-
-    if (passwordErrors.length > 0) {
-      setRegisterError(
-        'Password must meet the following requirements:\n\n' +
-          passwordErrors.map((error) => `${error}\n\n`).join('')
+  
+    try {
+      const response = await fetch(
+        `http://localhost:5000/users?email=${loginUsername}&password_hash=${loginPassword}`
       );
-      return;
+      const users = await response.json();
+  
+      if (users.length > 0) {
+        console.log('Inicio de sesión exitoso para:', users[0]);
+        // Aquí podrías guardar información del usuario o un token
+        // localStorage.setItem('userId', users[0].id);
+        window.location.href = '/dashboard'; // Redirigir a la página principal
+      } else {
+        setLoginError('Credenciales inválidas');
+      }
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      setLoginError('Error al conectar con el servidor.');
     }
-
-    setRegisterError('');
-    console.log('Registering with:', registerUsername, registerEmail, registerPassword);
-    // Simulación de registro exitoso
-    setTimeout(() => {
-      alert('Registered successfully! Please log in.');
-      setShowRegister(false); // Redirigir al formulario de inicio de sesión
-    }, 1000);
   };
 
-  const handleForgotPassword = () => {
-    if (!forgotPasswordEmail.includes('@')) {
-      setEmailError('Please enter a valid email address.');
-      return;
+  const handleRegister = async () => {
+  if (!registerUsername || !registerEmail || !registerPassword) {
+    setRegisterError('Por favor, completa todos los campos.');
+    return;
+  }
+  if (!registerEmail.includes('@')) {
+    setRegisterError('Por favor, introduce un email válido.');
+    return;
+  }
+
+  // Validación de contraseña
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordErrors = [];
+
+  if (registerPassword.length < 8) {
+    passwordErrors.push('Al menos 8 caracteres.');
+  }
+  if (!/(?=.*[a-z])/.test(registerPassword)) {
+    passwordErrors.push('Al menos una letra minúscula.');
+  }
+  if (!/(?=.*[A-Z])/.test(registerPassword)) {
+    passwordErrors.push('Al menos una letra mayúscula.');
+  }
+  if (!/(?=.*\d)/.test(registerPassword)) {
+    passwordErrors.push('Al menos un número.');
+  }
+  if (!/(?=.*[@$!%*?&])/.test(registerPassword)) {
+    passwordErrors.push('Al menos un carácter especial.');
+  }
+
+  if (passwordErrors.length > 0) {
+    setRegisterError(
+      'La contraseña debe cumplir los siguientes requisitos:\n\n' +
+        passwordErrors.map((error) => `${error}\n\n`).join('')
+    );
+    return;
+  }
+
+  setRegisterError('');
+
+  try {
+    const response = await fetch('http://localhost:5000/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: registerUsername,
+        email: registerEmail,
+        password_hash: registerPassword, // ¡Importante: En una app real, hashearías esto!
+        // Puedes agregar otros campos si tu estructura de usuario lo requiere
+      }),
+    });
+
+    if (response.ok) {
+      const newUser = await response.json();
+      console.log('Usuario registrado exitosamente:', newUser);
+      alert('Registrado exitosamente! Por favor, inicia sesión.');
+      setShowRegister(false); // Volver al formulario de inicio de sesión
+    } else {
+      const errorData = await response.json();
+      setRegisterError(errorData.message || 'Error al registrar el usuario.');
     }
-    setEmailError('');
-    console.log('Sending reset password email to:', forgotPasswordEmail);
-    // Simulación de envío de correo
-    setTimeout(() => {
-      alert(`Reset password email sent to: ${forgotPasswordEmail}`);
-      setShowForgotPassword(false);
-    }, 1000);
-  };
+  } catch (error) {
+    console.error('Error al registrar el usuario:', error);
+    setRegisterError('Error al conectar con el servidor.');
+  }
+};
+
+const handleForgotPassword = async () => {
+  if (!forgotPasswordEmail) {
+    setEmailError('Por favor, introduce tu correo electrónico.');
+    return;
+  }
+  if (!forgotPasswordEmail.includes('@')) {
+    setEmailError('Por favor, introduce un correo electrónico válido.');
+    return;
+  }
+  setEmailError('');
+
+  try {
+    const response = await fetch(`http://localhost:5000/users?email=${forgotPasswordEmail}`);
+    const users = await response.json();
+
+    if (users.length > 0) {
+      // Simulación de envío de correo electrónico exitoso
+      alert(
+        `Se ha enviado un código de restablecimiento a ${forgotPasswordEmail}. Por favor, verifica tu correo.`
+      );
+      setShowForgotPassword(false); // Volver al formulario de inicio de sesión
+      setForgotPasswordEmail(''); // Limpiar el campo de email
+    } else {
+      setEmailError('No se encontró ningún usuario con ese correo electrónico.');
+    }
+  } catch (error) {
+    console.error('Error al verificar el correo electrónico:', error);
+    setEmailError('Error al conectar con el servidor.');
+  }
+};
 
   return (
     <div
