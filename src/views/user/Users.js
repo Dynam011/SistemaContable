@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   CCard,
   CButton,
@@ -10,6 +10,7 @@ import {
   CCol,
   CTable,
   CTableBody,
+  CTableRow,
   CTableDataCell,
   CTableHead,
   CTableHeaderCell,
@@ -93,7 +94,7 @@ const UserList = () => {
     setFormData({ ...formData, [name]: value })
   }
 
-  const handleSubmt = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     try {
       const method = selectedUser ? 'PUT' : 'POST' // Determina si es una creación o edición
