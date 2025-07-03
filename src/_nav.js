@@ -1,43 +1,23 @@
-import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
   cilStorage,
   cilSchool,
-  cilCheck,
   cilPenNib,
   cilCalendar,
   cilClipboard,
   cilAddressBook,
-  cilApple,
   cilRestaurant,
-  cilBell,
-  cilCalculator,
   cilChartPie,
   cilListNumbered,
-  cilCursor,
   cilDescription,
-  cilDrop,
   cilNotes,
   cilPencil,
-  cilPeople,
-  cilPuzzle,
-  cilSpeedometer,
-  cilStar,
-
-  cilGroup,
-  cilUser,
-
-  cilWc,
-  cilDollar,
-  cilWallet,
-  cilCart,
-  cilLibrary,
-  cilContact,
-  cilDiamond,
-  cilMenu,
+  
+  cilGroup
+  ,
 
 } from '@coreui/icons'
-import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+import { CNavItem, CNavTitle } from '@coreui/react'
 
 const _nav = [
   {
@@ -76,7 +56,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Subjects',
-    to: '/invoices',
+    to: '/subjects',
     icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
   },
   {
@@ -104,7 +84,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Inventory',
-    to: '/products',
+    to: '/inventory',
     icon: <CIcon icon={cilRestaurant} customClassName="nav-icon" />,
   },
   {
@@ -120,7 +100,7 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Assessments',
-    to: '/suppliers',
+    to: '/assessments',
     icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
   },
   {
@@ -151,33 +131,8 @@ const _nav = [
 
   },
   
-  {
-    component: CNavItem,
-    name: 'Sections',
-    to: '/sections',
-    icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-    },
 
-  },
-  {
-    component: CNavTitle,
-    name: 'Extras',
 
-  },
-  {
-    component: CNavGroup,
-    name: 'Pages',
-    icon: <CIcon icon={cilMenu} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Login',
-        to: '/login',
-      },
-    ],
-  },
 
 ]
 
