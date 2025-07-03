@@ -39,7 +39,7 @@ const Login = () => {
     console.log('funca')
     e.preventDefault()
     try {
-      const response = await fetch('http://localhost:4000/api/login', {
+      const response = await fetch('https://culinary-school-back.onrender.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: loginUsername, password: loginPassword }),

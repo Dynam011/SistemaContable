@@ -88,7 +88,7 @@ const Profile = () => {
       const token = localStorage.getItem('token')
       const user = JSON.parse(localStorage.getItem('usuario'))
 
-      const response = await fetch(`http://localhost:4000/api/users/${user.id}`, {
+      const response = await fetch(`https://culinary-school-back.onrender.com/api/users/${user.id}`, {
         method: 'PUT', // o PATCH según tu backend
         headers: {
           'Content-Type': 'application/json',

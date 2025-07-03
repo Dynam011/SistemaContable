@@ -61,7 +61,7 @@ const Sections = () => {
     const fetchSections = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://localhost:4000/api/sections', {
+        const response = await fetch('https://culinary-school-back.onrender.com/api/sections', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -85,7 +85,7 @@ const Sections = () => {
     const fetchInstructors = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://localhost:4000/api/users', {
+        const response = await fetch('https://culinary-school-back.onrender.com/api/users', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -150,8 +150,8 @@ const Sections = () => {
     try {
       const method = editSection ? 'PUT' : 'POST'
       const url = editSection
-        ? `http://localhost:4000/api/sections/${editSection.id}`
-        : 'http://localhost:4000/api/sections'
+        ? `https://culinary-school-back.onrender.com/api/sections/${editSection.id}`
+        : 'https://culinary-school-back.onrender.com/api/sections'
 
       const token = localStorage.getItem('token')
       const response = await fetch(url, {
@@ -204,7 +204,7 @@ const Sections = () => {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:4000/api/sections/${selectedSection.id}`, {
+      const response = await fetch(`https://culinary-school-back.onrender.com/api/sections/${selectedSection.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

@@ -55,7 +55,7 @@ const Subjects = () => {
     const fetchData = async () => {
       try {
         // Fetch subjects
-        const resSubjects = await fetch('http://localhost:4000/api/subjects', {
+        const resSubjects = await fetch('https://culinary-school-back.onrender.com/api/subjects', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -65,7 +65,7 @@ const Subjects = () => {
         setSubjects(dataSubjects)
 
         // Fetch programs for select
-        const resPrograms = await fetch('http://localhost:4000/api/programs', {
+        const resPrograms = await fetch('https://culinary-school-back.onrender.com/api/programs', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -109,8 +109,8 @@ const Subjects = () => {
     const token = localStorage.getItem('token')
     try {
       const url = editMode
-        ? `http://localhost:4000/api/subjects/${selectedSubject.id}`
-        : 'http://localhost:4000/api/subjects'
+        ? `https://culinary-school-back.onrender.com/api/subjects/${selectedSubject.id}`
+        : 'https://culinary-school-back.onrender.com/api/subjects'
       const method = editMode ? 'PUT' : 'POST'
       const res = await fetch(url, {
         method,
@@ -139,7 +139,7 @@ const Subjects = () => {
     if (!window.confirm('Are you sure you want to delete this subject?')) return
     const token = localStorage.getItem('token')
     try {
-      const res = await fetch(`http://localhost:4000/api/subjects/${subject.id}`, {
+      const res = await fetch(`https://culinary-school-back.onrender.com/api/subjects/${subject.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

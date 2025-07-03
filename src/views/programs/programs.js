@@ -49,7 +49,7 @@ const Programs = () => {
     const fetchPrograms = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://localhost:4000/api/programs', {
+        const response = await fetch('https://culinary-school-back.onrender.com/api/programs', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -93,8 +93,8 @@ const Programs = () => {
     try {
       const method = editProgram ? 'PUT' : 'POST'
       const url = editProgram
-        ? `http://localhost:4000/api/programs/${editProgram.id}`
-        : 'http://localhost:4000/api/programs'
+        ? `https://culinary-school-back.onrender.com/api/programs/${editProgram.id}`
+        : 'https://culinary-school-back.onrender.com/api/programs'
 
       const token = localStorage.getItem('token')
       const response = await fetch(url, {
@@ -147,7 +147,7 @@ const Programs = () => {
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:4000/api/programs/${id}`, {
+      const response = await fetch(`https://culinary-school-back.onrender.com/api/programs/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

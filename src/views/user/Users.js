@@ -62,7 +62,7 @@ const UserList = () => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://localhost:4000/api/users', {
+        const response = await fetch('https://culinary-school-back.onrender.com/api/users', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
@@ -113,8 +113,8 @@ const UserList = () => {
     try {
       const method = selectedUser ? 'PUT' : 'POST'
       const url = selectedUser
-        ? `http://localhost:4000/api/users/${selectedUser.id}`
-        : 'http://localhost:4000/api/users'
+        ? `https://culinary-school-back.onrender.com/api/users/${selectedUser.id}`
+        : 'https://culinary-school-back.onrender.com/api/users'
 
       if (!formData.status) {
         formData.status = 'active'
@@ -189,7 +189,7 @@ const UserList = () => {
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:4000/api/users/${selectedUser.id}`, {
+      const response = await fetch(`https://culinary-school-back.onrender.com/api/users/${selectedUser.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
