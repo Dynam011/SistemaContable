@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   CCard,
   CCardBody,
@@ -19,30 +19,100 @@ import {
   CForm,
   CFormInput,
   CFormCheck,
-
 } from '@coreui/react'
-import {CIcon} from '@coreui/icons-react'
-import { cilPencil, cilSettings, cilUser, cilExitToApp} from '@coreui/icons'
+import { CIcon } from '@coreui/icons-react'
+import { cilPencil, cilSettings, cilUser, cilExitToApp } from '@coreui/icons'
+
+const getUserFromStorage = () => {
+  try {
+    const user = JSON.parse(localStorage.getItem('usuario'))
+    return user
+      ? {
+          name:
+            (user.first_name && user.last_name
+              ? `${user.first_name} ${user.last_name}`
+              : user.first_name || user.last_name || user.email || 'Usuario'),
+          email: user.email || '',
+          phone: user.phone || 'No registrado',
+          role: user.rol_id || 'Usuario',
+        }
+      : {
+          name: 'Usuario',
+          email: '',
+          phone: '',
+          role: '',
+        }
+  } catch {
+    return {
+      name: 'Usuario',
+      email: '',
+      phone: '',
+      role: '',
+    }
+  }
+}
 
 const Profile = () => {
   const [editModalVisible, setEditModalVisible] = useState(false)
   const [settingsModalVisible, setSettingsModalVisible] = useState(false)
   const [logoutVisible, setLogoutVisible] = useState(false)
-
-  const [profileData, setProfileData] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 234 567 890',
-    address: '123 Main Street, Springfield',
-  })
+  const [profileData, setProfileData] = useState(getUserFromStorage())
   const [settings, setSettings] = useState({
     language: 'Español',
     notifications: true,
   })
+  const [editFormData, setEditFormData] = useState(profileData)
+  const [feedback, setFeedback] = useState({ type: '', message: '' }) // Nuevo estado para mensajes
 
+  // Actualiza el perfil si cambia el usuario en localStorage
+  useEffect(() => {
+    setProfileData(getUserFromStorage())
+  }, [])
+
+  // Cuando abres el modal, copia los datos actuales al formulario temporal
+  const openEditModal = () => {
+    setEditFormData(profileData)
+    setEditModalVisible(true)
+  }
+
+  // Cambios solo afectan el formulario temporal
   const handleEditChange = (e) => {
     const { name, value } = e.target
-    setProfileData({ ...profileData, [name]: value })
+    setEditFormData({ ...editFormData, [name]: value })
+  }
+
+  // Guardar cambios: actualiza backend y luego el estado principal
+  const handleSaveProfile = async () => {
+    setFeedback({ type: '', message: '' })
+    try {
+      const token = localStorage.getItem('token')
+      const user = JSON.parse(localStorage.getItem('usuario'))
+
+      const response = await fetch(`http://localhost:4000/api/users/${user.id}`, {
+        method: 'PUT', // o PATCH según tu backend
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editFormData),
+      })
+      if (!response.ok) throw new Error('Error al actualizar perfil')
+      // Actualiza el estado y localStorage solo si el backend responde OK
+      setProfileData(editFormData)
+      localStorage.setItem(
+        'usuario',
+        JSON.stringify({
+          ...JSON.parse(localStorage.getItem('usuario')),
+          ...editFormData,
+        })
+      )
+      setEditModalVisible(false)
+      setFeedback({ type: 'success', message: 'Perfil actualizado correctamente.' })
+    } catch (error) {
+      setEditModalVisible(false)
+      setFeedback({ type: 'error', message: 'No se pudo actualizar el perfil.' })
+   
+    }
   }
 
   const handleSettingsChange = (e) => {
@@ -50,8 +120,23 @@ const Profile = () => {
     setSettings({ ...settings, [name]: checked })
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('usuario')
+    window.location.reload()
+  }
+
   return (
     <div className="container mt-4">
+      {/* Mensaje de feedback */}
+      {feedback.message && (
+        <div
+          className={`alert ${feedback.type === 'success' ? 'alert-success' : 'alert-danger'} mt-2`}
+          role="alert"
+        >
+          {feedback.message}
+        </div>
+      )}
       <CRow>
         {/* Avatar and Basic Info */}
         <CCol md={4}>
@@ -65,8 +150,8 @@ const Profile = () => {
             />
             <CCardBody>
               <CCardTitle>{profileData.name}</CCardTitle>
-              <CCardText className="text-muted">Admin</CCardText>
-              <CButton color="primary" className="me-2" onClick={() => setEditModalVisible(true)}>
+              <CCardText className="text-muted">{profileData.role}</CCardText>
+              <CButton color="primary" className="me-2" onClick={openEditModal}>
                 <CIcon icon={cilPencil} className="me-1" />
                 Editar Perfil
               </CButton>
@@ -74,7 +159,7 @@ const Profile = () => {
                 <CIcon icon={cilSettings} className="me-1" />
                 Configuración
               </CButton>
-              <CButton className="text-danger"  onClick={() => setLogoutVisible(true)}>
+              <CButton className="text-danger" onClick={() => setLogoutVisible(true)}>
                 <CIcon icon={cilExitToApp} className="me-2" />
                 Logout
               </CButton>
@@ -98,9 +183,6 @@ const Profile = () => {
                 </CListGroupItem>
                 <CListGroupItem>
                   <strong>Teléfono:</strong> {profileData.phone}
-                </CListGroupItem>
-                <CListGroupItem>
-                  <strong>Dirección:</strong> {profileData.address}
                 </CListGroupItem>
               </CListGroup>
             </CCardBody>
@@ -138,7 +220,7 @@ const Profile = () => {
               type="text"
               name="name"
               label="Nombre"
-              value={profileData.name}
+              value={editFormData.name}
               onChange={handleEditChange}
             />
             <CFormInput
@@ -146,7 +228,7 @@ const Profile = () => {
               type="email"
               name="email"
               label="Correo Electrónico"
-              value={profileData.email}
+              value={editFormData.email}
               onChange={handleEditChange}
             />
             <CFormInput
@@ -154,15 +236,7 @@ const Profile = () => {
               type="text"
               name="phone"
               label="Teléfono"
-              value={profileData.phone}
-              onChange={handleEditChange}
-            />
-            <CFormInput
-              className="mb-3"
-              type="text"
-              name="address"
-              label="Dirección"
-              value={profileData.address}
+              value={editFormData.phone}
               onChange={handleEditChange}
             />
           </CForm>
@@ -171,7 +245,7 @@ const Profile = () => {
           <CButton color="secondary" onClick={() => setEditModalVisible(false)}>
             Cancelar
           </CButton>
-          <CButton color="primary" onClick={() => setEditModalVisible(false)}>
+          <CButton color="primary" onClick={handleSaveProfile}>
             Guardar Cambios
           </CButton>
         </CModalFooter>
@@ -203,8 +277,8 @@ const Profile = () => {
           </CButton>
         </CModalFooter>
       </CModal>
-        
-        {/* Modal para Logout */}
+
+      {/* Modal para Logout */}
       <CModal visible={logoutVisible} onClose={() => setLogoutVisible(false)}>
         <CModalHeader>
           <CModalTitle>¿Estás seguro?</CModalTitle>
@@ -216,7 +290,7 @@ const Profile = () => {
           <CButton color="secondary" onClick={() => setLogoutVisible(false)}>
             Cancelar
           </CButton>
-          <CButton color="danger" onClick={() => setLogoutVisible(false)}>
+          <CButton color="danger" onClick={handleLogout}>
             Cerrar Sesión
           </CButton>
         </CModalFooter>

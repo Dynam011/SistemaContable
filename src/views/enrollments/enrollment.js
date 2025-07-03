@@ -23,22 +23,9 @@ import {
 } from '@coreui/react';
 
 export const EnrollmentsList = () => {
-  const [enrollments, setEnrollments] = useState([
-    { id: 1, student_id: 101, section_id: 201, enrollment_date: '2025-12-08', status: 'active', payment_status: 'paid' },
-    { id: 2, student_id: 102, section_id: 202, enrollment_date: '2025-09-05', status: 'inactive', payment_status: 'unpaid' },
-    { id: 3, student_id: 103, section_id: 203, enrollment_date: '2025-06-14', status: 'active', payment_status: 'partial' },
-
-  ]);
-  const [students, setStudents] = useState([
-    { id: 101, first_name: 'Nesly', last_name: 'Contreras', email: 'neslycontreras@gmail.com' },
-    { id: 102, first_name: 'Isaac', last_name: 'Alba', email: 'isaacalba@gmail.com' },
-    { id: 103, first_name: 'Jesus', last_name: 'Delgado', email: 'jesusdelgado@gmail.com' },
-  ]);
-  const [sections, setSections] = useState([
-    { id: 201, subject_id: 'CHIN01', classroom: 'R1' },
-    { id: 202, subject_id: 'INDI02', classroom: 'R2' },
-    { id: 203, subject_id: 'MEX03', classroom: 'R3' },
-  ]);
+  const [enrollments, setEnrollments] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [sections, setSections] = useState([]);
   const [filterStudentId, setFilterStudentId] = useState('');
   const [filterSectionId, setFilterSectionId] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -62,9 +49,49 @@ export const EnrollmentsList = () => {
     status: 'active',
     payment_status: 'unpaid',
   });
+  const [alertMessage, setAlertMessage] = useState('');
 
+  // Fetch all data from backend
   useEffect(() => {
-    // Sin datos reales, se simula la carga de datos
+    const token = localStorage.getItem('token');
+    const fetchAll = async () => {
+      try {
+        // Fetch enrollments
+        const enrollmentsRes = await fetch('http://localhost:4000/api/enrollments', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const enrollmentsData = await enrollmentsRes.json();
+        setEnrollments(enrollmentsData);
+
+        // Fetch students
+        const studentsRes = await fetch('http://localhost:4000/api/users', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const studentsData = await studentsRes.json();
+        setStudents(studentsData);
+
+        // Fetch sections
+        const sectionsRes = await fetch('http://localhost:4000/api/sections', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const sectionsData = await sectionsRes.json();
+        setSections(sectionsData);
+
+      } catch (error) {
+        setAlertMessage('Error loading data from backend.');
+        console.error(error);
+      }
+    };
+    fetchAll();
   }, []);
 
   const filteredEnrollments = enrollments.filter((enrollment) => {
@@ -82,27 +109,71 @@ export const EnrollmentsList = () => {
     }));
   };
 
-  const handleAddEnrollment = async () => { // Agregar nueva matrícula a la lista local (para pruebas)
-    const newId = enrollments.length > 0 ? Math.max(...enrollments.map(e => e.id)) + 1 : 1;
-    setEnrollments([...enrollments, { id: newId, ...newEnrollment }]);
-    setVisibleAdd(false);
-    setNewEnrollment({ student_id: '', section_id: '', enrollment_date: '', status: 'active', payment_status: 'unpaid' });
+  // Add enrollment to backend
+  const handleAddEnrollment = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch('http://localhost:4000/api/enrollments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(newEnrollment),
+      });
+      if (!response.ok) throw new Error('Failed to add enrollment');
+      const added = await response.json();
+      setEnrollments([...enrollments, added]);
+      setVisibleAdd(false);
+      setNewEnrollment({ student_id: '', section_id: '', enrollment_date: '', status: 'active', payment_status: 'unpaid' });
+      setAlertMessage('Enrollment added successfully.');
+    } catch (error) {
+      setAlertMessage('Error adding enrollment.');
+    }
   };
 
-  const handleEditEnrollment = async () => { // Editar una matrícula en la lista local (para pruebas)
-    const updatedEnrollments = enrollments.map(e =>
-      e.id === editEnrollment.id ? editEnrollment : e
-    );
-    setEnrollments(updatedEnrollments);
-    setVisibleEdit(false);
-    setEditEnrollment({ id: '', student_id: '', section_id: '', enrollment_date: '', status: 'active', payment_status: 'unpaid' });
+  // Edit enrollment in backend
+  const handleEditEnrollment = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`http://localhost:4000/api/enrollments/${editEnrollment.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(editEnrollment),
+      });
+      if (!response.ok) throw new Error('Failed to update enrollment');
+      const updated = await response.json();
+      setEnrollments(enrollments.map(e => e.id === updated.id ? updated : e));
+      setVisibleEdit(false);
+      setEditEnrollment({ id: '', student_id: '', section_id: '', enrollment_date: '', status: 'active', payment_status: 'unpaid' });
+      setAlertMessage('Enrollment updated successfully.');
+    } catch (error) {
+      setAlertMessage('Error updating enrollment.');
+    }
   };
 
-  const handleDeleteEnrollment = async () => {    // Eliminar una matrícula de la lista local (para pruebas)
-    const updatedEnrollments = enrollments.filter(e => e.id !== selectedEnrollment.id);
-    setEnrollments(updatedEnrollments);
-    setVisibleDelete(false);
-    setSelectedEnrollment(null);
+  // Delete enrollment in backend
+  const handleDeleteEnrollment = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`http://localhost:4000/api/enrollments/${selectedEnrollment.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error('Failed to delete enrollment');
+      setEnrollments(enrollments.filter(e => e.id !== selectedEnrollment.id));
+      setVisibleDelete(false);
+      setSelectedEnrollment(null);
+      setAlertMessage('Enrollment deleted successfully.');
+    } catch (error) {
+      setAlertMessage('Error deleting enrollment.');
+    }
   };
 
   return (
@@ -111,6 +182,11 @@ export const EnrollmentsList = () => {
         <h4 className="mb-0">Enrollments</h4>
       </CCardHeader>
       <CCardBody>
+        {alertMessage && (
+          <div className="alert alert-info" role="alert">
+            {alertMessage}
+          </div>
+        )}
         <CForm className="mb-4">
           <CRow className="g-3">
             <CCol md={3}>
@@ -194,7 +270,7 @@ export const EnrollmentsList = () => {
                     {student ? `${student.first_name} ${student.last_name}` : 'N/A'}
                   </CTableDataCell>
                   <CTableDataCell>{section ? `Subject ID: ${section.subject_id}` : 'N/A'}</CTableDataCell>
-                  <CTableDataCell>{new Date(enrollment.enrollment_date).toLocaleDateString()}</CTableDataCell>
+                  <CTableDataCell>{enrollment.enrollment_date ? new Date(enrollment.enrollment_date).toLocaleDateString() : ''}</CTableDataCell>
                   <CTableDataCell>{enrollment.status}</CTableDataCell>
                   <CTableDataCell>{enrollment.payment_status}</CTableDataCell>
                   <CTableDataCell>
@@ -322,29 +398,27 @@ export const EnrollmentsList = () => {
                 label="Student"
                 value={editEnrollment.student_id}
                 onChange={(e) => handleInputChange(e, setEditEnrollment, 'student_id')}
-                options={[
-                  { label: 'Select Student', value: '' },
-                  ...students.map((student) => (
-                    <option key={student.id} value={student.id}>
-                      {student.first_name} {student.last_name} ({student.email})
-                    </option>
-                  )),
-                ]}
-              />
+              >
+                <option value="">Select Student</option>
+                {students.map((student) => (
+                  <option key={student.id} value={student.id}>
+                    {student.first_name} {student.last_name} ({student.email})
+                  </option>
+                ))}
+              </CFormSelect>
               <CFormSelect
                 className="mb-3"
                 label="Section"
                 value={editEnrollment.section_id}
                 onChange={(e) => handleInputChange(e, setEditEnrollment, 'section_id')}
-                options={[
-                  { label: 'Select Section', value: '' },
-                  ...sections.map((section) => (
-                    <option key={section.id} value={section.id}>
-                      Subject ID: {section.subject_id}, Classroom: {section.classroom}
-                    </option>
-                  )),
-                ]}
-              />
+              >
+                <option value="">Select Section</option>
+                {sections.map((section) => (
+                  <option key={section.id} value={section.id}>
+                    Subject ID: {section.subject_id}, Classroom: {section.classroom}
+                  </option>
+                ))}
+              </CFormSelect>
               <CFormInput
                 type="date"
                 label="Enrollment Date"

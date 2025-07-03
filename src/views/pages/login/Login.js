@@ -47,15 +47,19 @@ const Login = () => {
 
       const data = await response.json()
       console.log('Respuesta del servidor:', data)
-      console.log(response, "  ", response.ok)
       if (response.ok) {
         localStorage.setItem('token', data.token)
         
         localStorage.setItem(
           'usuario',
           JSON.stringify({
-            email: data.email,
-            rol_id: data.rol_id,
+            email: data.user.email,
+            phone: data.user.phone,
+            first_name: data.user.first_name,
+            last_name: data.user.last_name,
+            
+            rol_id: data.user.rol_id,
+            id: data.user.id,
           }),
         )
         window.location.href = '/#/dashboard'; // O usa navigate('/dashboard') si tienes el hook
@@ -211,6 +215,7 @@ const Login = () => {
                     type="email"
                     placeholder="Email"
                     value={forgotPasswordEmail}
+                    required
                     onChange={(e) => setForgotPasswordEmail(e.target.value)}
                   />
                 </CInputGroup>
@@ -243,6 +248,7 @@ const Login = () => {
                   <CFormInput
                     placeholder="Username"
                     autoComplete="username"
+                    required
                     value={registerUsername}
                     onChange={(e) => setRegisterUsername(e.target.value)}
                   />
@@ -253,6 +259,7 @@ const Login = () => {
                   </CInputGroupText>
                   <CFormInput
                     placeholder="Email"
+                    required
                     autoComplete="email"
                     value={registerEmail}
                     onChange={(e) => setRegisterEmail(e.target.value)}
@@ -264,6 +271,7 @@ const Login = () => {
                   </CInputGroupText>
                   <CFormInput
                     type="password"
+                    required
                     placeholder="Password"
                     autoComplete="new-password"
                     value={registerPassword}
@@ -299,6 +307,7 @@ const Login = () => {
                   <CFormInput
                     placeholder="Username"
                     autoComplete="username"
+                    required
                     value={loginUsername}
                     onChange={(e) => setLoginUsername(e.target.value)}
                   />
@@ -311,6 +320,7 @@ const Login = () => {
                     type="password"
                     placeholder="Password"
                     autoComplete="current-password"
+                    required
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                   />

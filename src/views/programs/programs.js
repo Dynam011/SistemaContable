@@ -45,7 +45,13 @@ const Programs = () => {
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
-        const response = await fetch('http://localhost:5000/culinary_programs')
+        const token = localStorage.getItem('token'); 
+        const response = await fetch('http://localhost:4000/api/programs',{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+         });
         if (!response.ok) {
           throw new Error(`Failed to fetch programs: ${response.status} ${response.statusText}`)
         }

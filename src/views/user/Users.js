@@ -52,7 +52,13 @@ const UserList = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:4000/users')
+        const token = localStorage.getItem('token'); 
+        const response = await fetch('http://localhost:4000/api/users',{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+         });
         if (!response.ok) {
           throw new Error('Failed to fetch users')
         }

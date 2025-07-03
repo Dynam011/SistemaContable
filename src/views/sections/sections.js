@@ -56,7 +56,13 @@ const Sections = () => {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const response = await fetch('http://localhost:5000/sections')
+                const token = localStorage.getItem('token'); 
+        const response = await fetch('http://localhost:4000/api/sections',{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+         });
         if (!response.ok) {
           throw new Error(`Failed to fetch sections: ${response.status} ${response.statusText}`)
         }
@@ -77,12 +83,18 @@ const Sections = () => {
   useEffect(() => {
     const fetchInstructors = async () => {
       try {
-        const response = await fetch('http://localhost:5000/users')
+           const token = localStorage.getItem('token'); 
+        const response = await fetch('http://localhost:4000/api/users',{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+         });
         if (!response.ok) {
           throw new Error(`Failed to fetch users: ${response.status} ${response.statusText}`)
         }
         const users = await response.json()
-        const instr = users.filter((user) => user.role_id === 2) // Filtra solo los instructores
+        const instr = users.filter((user) => user.role_id === 1) // Filtra solo los instructores
         setInstructors(instr)
       } catch (error) {
         console.error('Error fetching instructors:', error)
@@ -93,24 +105,6 @@ const Sections = () => {
     fetchInstructors()
   }, [])
 
-  // Fetch classrooms from localDB
-  useEffect(() => {
-    const fetchClassrooms = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/classrooms')
-        if (!response.ok) {
-          throw new Error(`Failed to fetch classrooms: ${response.status} ${response.statusText}`)
-        }
-        const data = await response.json()
-        setClassrooms(data)
-      } catch (error) {
-        console.error('Error fetching classrooms:', error)
-        setAlertMessage('Failed to load classrooms.')
-      }
-    }
-
-    fetchClassrooms()
-  }, [])
 
   const validate = () => {
     const newErrors = {}
@@ -324,7 +318,6 @@ const Sections = () => {
             <CTableHead>
               <CTableRow>
                 <CTableHeaderCell>#</CTableHeaderCell>
-                <CTableHeaderCell>Subject</CTableHeaderCell>
                 <CTableHeaderCell>Instructor</CTableHeaderCell>
                 <CTableHeaderCell>Classroom</CTableHeaderCell>
                 <CTableHeaderCell>Max Capacity</CTableHeaderCell>
@@ -335,7 +328,6 @@ const Sections = () => {
               {instructors && sections.map((section) => (
                 <CTableRow key={section.id}>
                   <CTableDataCell>{section.id}</CTableDataCell>
-                  <CTableDataCell>{section.subject_id}</CTableDataCell>
                   <CTableDataCell>
                     {instructors && instructors.find((instr) => instr.id == section.chef_id)?.first_name || 'N/A'}
                   </CTableDataCell>
