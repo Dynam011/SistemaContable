@@ -18,7 +18,6 @@
     "serve": "vite preview",
     "start:json-server": "json-server --watch src/database/localDB.json --port 5000",
     "start": "vite"
-
   },
   "dependencies": {
     "@coreui/chartjs": "^4.1.0",
@@ -29,6 +28,7 @@
     "@coreui/react-chartjs": "^3.0.0",
     "@coreui/utils": "^2.0.2",
     "@popperjs/core": "^2.11.8",
+    "@react-pdf/renderer": "^4.3.0",
     "axios": "^1.8.4",
     "chart.js": "^4.4.8",
     "classnames": "^2.5.1",
