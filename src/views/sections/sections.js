@@ -284,20 +284,7 @@ const Sections = () => {
             </div>
             <CForm className="my-3">
               <CRow className="g-2">
-                <CCol xs={6} md={2}>
-                  <CFormInput
-                    type="text"
-                    placeholder="ID"
-                    name="id"
-                    value={searchFilters.id}
-                    onChange={handleSearchChange}
-                    style={{
-                      background: darkColors.card,
-                      color: darkColors.text,
-                      borderColor: darkColors.border,
-                    }}
-                  />
-                </CCol>
+               
                 <CCol xs={6} md={2}>
                   <CFormInput
                     type="text"
@@ -375,7 +362,6 @@ const Sections = () => {
             >
               <CTableHead>
                 <CTableRow style={{ background: darkColors.card }}>
-                  <CTableHeaderCell style={{ color: darkColors.accent }}>#</CTableHeaderCell>
                   <CTableHeaderCell style={{ color: darkColors.accent }}>Materia</CTableHeaderCell>
                   <CTableHeaderCell style={{ color: darkColors.accent }}>Instructor</CTableHeaderCell>
                   <CTableHeaderCell style={{ color: darkColors.accent }}>Aula</CTableHeaderCell>
@@ -393,7 +379,7 @@ const Sections = () => {
                 ) : (
                   filteredSection.map((section) => (
                     <CTableRow key={section.id}>
-                      <CTableDataCell>{section.id}</CTableDataCell>
+     
                       <CTableDataCell>{section.subject_id}</CTableDataCell>
                       <CTableDataCell>
                         {instructors.find((instr) => instr.id == section.chef_id)?.first_name || 'N/A'}

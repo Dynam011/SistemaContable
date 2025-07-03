@@ -1,26 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import {
-  CCard,
   CButton,
-  CCardBody,
-  CCardHeader,
-  CCol,
   CForm,
   CFormInput,
   CRow,
+  CCol,
   CTable,
-  CTableDataCell,
   CTableHead,
   CTableRow,
   CTableHeaderCell,
   CTableBody,
+  CTableDataCell,
   CModal,
-  CModalBody,
-  CModalFooter,
   CModalHeader,
   CModalTitle,
+  CModalBody,
+  CModalFooter,
   CFormSelect,
+  CAlert,
 } from '@coreui/react';
+import CIcon from '@coreui/icons-react'
+import { cilPencil, cilTrash, cilPlus, cilWarning, cilCloudDownload } from '@coreui/icons'
+import { PDFDownloadLink } from '@react-pdf/renderer'
+import PDFEnrollment from '../../components/PDFs/PDFEnrollment'
+
+const darkColors = {
+  card: '#23262F',
+  accent: '#FFB347',
+  text: '#F5F6FA',
+  secondary: '#A3A7B7',
+  border: '#31344b',
+}
+
 
 export const EnrollmentsList = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -126,9 +137,9 @@ export const EnrollmentsList = () => {
       setEnrollments([...enrollments, added]);
       setVisibleAdd(false);
       setNewEnrollment({ student_id: '', section_id: '', enrollment_date: '', status: 'active', payment_status: 'unpaid' });
-      setAlertMessage('Enrollment added successfully.');
+      setAlertMessage('Matrícula agregada correctamente.');
     } catch (error) {
-      setAlertMessage('Error adding enrollment.');
+      setAlertMessage('Error al agregar la matrícula.');
     }
   };
 
@@ -149,9 +160,9 @@ export const EnrollmentsList = () => {
       setEnrollments(enrollments.map(e => e.id === updated.id ? updated : e));
       setVisibleEdit(false);
       setEditEnrollment({ id: '', student_id: '', section_id: '', enrollment_date: '', status: 'active', payment_status: 'unpaid' });
-      setAlertMessage('Enrollment updated successfully.');
+      setAlertMessage('Matrícula actualizada correctamente.');
     } catch (error) {
-      setAlertMessage('Error updating enrollment.');
+      setAlertMessage('Error al actualizar la matrícula.');
     }
   };
 
@@ -170,315 +181,419 @@ export const EnrollmentsList = () => {
       setEnrollments(enrollments.filter(e => e.id !== selectedEnrollment.id));
       setVisibleDelete(false);
       setSelectedEnrollment(null);
-      setAlertMessage('Enrollment deleted successfully.');
+      setAlertMessage('Matrícula eliminada correctamente.');
     } catch (error) {
-      setAlertMessage('Error deleting enrollment.');
+      setAlertMessage('Error al eliminar la matrícula.');
     }
   };
 
   return (
-    <CCard className="mb-4">
-      <CCardHeader>
-        <h4 className="mb-0">Enrollments</h4>
-      </CCardHeader>
-      <CCardBody>
-        {alertMessage && (
-          <div className="alert alert-info" role="alert">
-            {alertMessage}
-          </div>
-        )}
-        <CForm className="mb-4">
-          <CRow className="g-3">
-            <CCol md={3}>
-              <CFormSelect
-                value={filterStudentId}
-                onChange={(e) => setFilterStudentId(e.target.value)}
-                options={[
-                  { label: 'Filter by Student', value: '' },
-                  ...students.map((student) => ({
-                    label: `${student.first_name} ${student.last_name} (${student.email})`,
-                    value: student.id.toString(),
-                  })),
-                ]}
-              />
-            </CCol>
-            <CCol md={3}>
-              <CFormSelect
-                value={filterSectionId}
-                onChange={(e) => setFilterSectionId(e.target.value)}
-                options={[
-                  { label: 'Filter by Section', value: '' },
-                  ...sections.map((section) => ({
-                    label: `Subject ID: ${section.subject_id}, Classroom: ${section.classroom}`,
-                    value: section.id.toString(),
-                  })),
-                ]}
-              />
-            </CCol>
-            <CCol md={3}>
-              <CFormSelect
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                options={[
-                  { label: 'Filter by Status', value: 'all' },
-                  { label: 'Active', value: 'active' },
-                  { label: 'Inactive', value: 'inactive' },
-                  { label: 'Completed', value: 'completed' },
-                ]}
-              />
-            </CCol>
-            <CCol md={3}>
-              <CFormSelect
-                value={filterPaymentStatus}
-                onChange={(e) => setFilterPaymentStatus(e.target.value)}
-                options={[
-                  { label: 'Filter by Payment Status', value: 'all' },
-                  { label: 'Paid', value: 'paid' },
-                  { label: 'Unpaid', value: 'unpaid' },
-                  { label: 'Partial', value: 'partial' },
-                ]}
-              />
-            </CCol>
-            <CCol md={3}>
-              <CButton color="info" style={{ color: 'white' }} onClick={() => setVisibleAdd(true)}>
-                Add Enrollment
-              </CButton>
-            </CCol>
-          </CRow>
-        </CForm>
-
-        <CTable hover responsive className="mt-4">
-          <CTableHead>
-            <CTableRow>
-              <CTableHeaderCell>ID</CTableHeaderCell>
-              <CTableHeaderCell>Student</CTableHeaderCell>
-              <CTableHeaderCell>Section</CTableHeaderCell>
-              <CTableHeaderCell>Enrollment Date</CTableHeaderCell>
-              <CTableHeaderCell>Status</CTableHeaderCell>
-              <CTableHeaderCell>Payment Status</CTableHeaderCell>
-              <CTableHeaderCell>Actions</CTableHeaderCell>
-            </CTableRow>
-          </CTableHead>
-          <CTableBody>
-            {filteredEnrollments.map((enrollment) => {
-              const student = students.find((s) => s.id === enrollment.student_id);
-              const section = sections.find((sec) => sec.id === enrollment.section_id);
-              return (
-                <CTableRow key={enrollment.id}>
-                  <CTableDataCell>{enrollment.id}</CTableDataCell>
-                  <CTableDataCell>
-                    {student ? `${student.first_name} ${student.last_name}` : 'N/A'}
-                  </CTableDataCell>
-                  <CTableDataCell>{section ? `Subject ID: ${section.subject_id}` : 'N/A'}</CTableDataCell>
-                  <CTableDataCell>{enrollment.enrollment_date ? new Date(enrollment.enrollment_date).toLocaleDateString() : ''}</CTableDataCell>
-                  <CTableDataCell>{enrollment.status}</CTableDataCell>
-                  <CTableDataCell>{enrollment.payment_status}</CTableDataCell>
-                  <CTableDataCell>
+    <div
+      style={{
+        background: darkColors.background,
+        minHeight: '100vh',
+        padding: '32px 0',
+      }}
+    >
+      <CRow className="justify-content-center">
+        <CCol xs={12}>
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+            <div
+              style={{
+                background: 'transparent',
+                borderBottom: `1px solid ${darkColors.border}`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 0 18px 0',
+                flexWrap: 'wrap',
+                gap: 12,
+              }}
+            >
+              <h3 style={{ color: darkColors.accent, margin: 0, fontWeight: 700, letterSpacing: 1 }}>
+                Matrículas
+              </h3>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <PDFDownloadLink
+                  document={<PDFEnrollment fecha={new Date().toLocaleDateString()} />}
+                  fileName={`matriculas_${new Date().toISOString().slice(0, 10)}.pdf`}
+                  style={{ textDecoration: 'none' }}
+                >
+                  {({ loading }) => (
                     <CButton
                       color="info"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedEnrollment(enrollment);
-                        setEditEnrollment({
-                          id: enrollment.id,
-                          student_id: enrollment.student_id,
-                          section_id: enrollment.section_id,
-                          enrollment_date: enrollment.enrollment_date,
-                          status: enrollment.status,
-                          payment_status: enrollment.payment_status,
-                        });
-                        setVisibleEdit(true);
-                      }}
-                      className="me-2"
-                    >
-                      Edit
-                    </CButton>
-                    <CButton
-                      color="danger"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedEnrollment(enrollment);
-                        setVisibleDelete(true);
+                      style={{
+                        color: '#fff',
+                        fontWeight: 600,
+                        borderRadius: 8,
+                        boxShadow: '0 2px 8px #00bfff44',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
                       }}
                     >
-                      Delete
+                      <CIcon icon={cilCloudDownload} />
+                      {loading ? 'Generando PDF...' : 'Descargar PDF'}
                     </CButton>
-                  </CTableDataCell>
+                  )}
+                </PDFDownloadLink>
+                <CButton
+                  color="warning"
+                  style={{
+                    color: darkColors.background,
+                    fontWeight: 600,
+                    borderRadius: 8,
+                    boxShadow: '0 2px 8px #ffb34744',
+                  }}
+                  onClick={() => setVisibleAdd(true)}
+                >
+                  <CIcon icon={cilPlus} className="me-2" />
+                  Nueva Matrícula
+                </CButton>
+              </div>
+            </div>
+            {alertMessage && (
+              <CAlert color="info" className="d-flex align-items-center mt-3" style={{ background: darkColors.card, color: darkColors.text }}>
+                <CIcon icon={cilWarning} className="me-2" />
+                {alertMessage}
+              </CAlert>
+            )}
+            <CForm className="mb-4">
+              <CRow className="g-3">
+                <CCol md={3}>
+                  <CFormSelect
+                    value={filterStudentId}
+                    onChange={(e) => setFilterStudentId(e.target.value)}
+                    style={{ background: darkColors.card, color: darkColors.text, borderColor: darkColors.border }}
+                    options={[
+                      { label: 'Filtrar por Estudiante', value: '' },
+                      ...students.map((student) => ({
+                        label: `${student.first_name} ${student.last_name} (${student.email})`,
+                        value: student.id.toString(),
+                      })),
+                    ]}
+                  />
+                </CCol>
+                <CCol md={3}>
+                  <CFormSelect
+                    value={filterSectionId}
+                    onChange={(e) => setFilterSectionId(e.target.value)}
+                    style={{ background: darkColors.card, color: darkColors.text, borderColor: darkColors.border }}
+                    options={[
+                      { label: 'Filtrar por Sección', value: '' },
+                      ...sections.map((section) => ({
+                        label: `Materia: ${section.subject_id}, Aula: ${section.classroom}`,
+                        value: section.id.toString(),
+                      })),
+                    ]}
+                  />
+                </CCol>
+                <CCol md={3}>
+                  <CFormSelect
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    style={{ background: darkColors.card, color: darkColors.text, borderColor: darkColors.border }}
+                    options={[
+                      { label: 'Filtrar por Estado', value: 'all' },
+                      { label: 'Activo', value: 'active' },
+                      { label: 'Inactivo', value: 'inactive' },
+                      { label: 'Completado', value: 'completed' },
+                    ]}
+                  />
+                </CCol>
+                <CCol md={3}>
+                  <CFormSelect
+                    value={filterPaymentStatus}
+                    onChange={(e) => setFilterPaymentStatus(e.target.value)}
+                    style={{ background: darkColors.card, color: darkColors.text, borderColor: darkColors.border }}
+                    options={[
+                      { label: 'Filtrar por Pago', value: 'all' },
+                      { label: 'Pagado', value: 'paid' },
+                      { label: 'No Pagado', value: 'unpaid' },
+                      { label: 'Parcial', value: 'partial' },
+                    ]}
+                  />
+                </CCol>
+              </CRow>
+            </CForm>
+            <CTable
+              hover
+              responsive
+              className="mt-4"
+              style={{
+                background: darkColors.card,
+                color: darkColors.text,
+                borderRadius: 12,
+                overflow: 'hidden',
+              }}
+            >
+              <CTableHead>
+                <CTableRow style={{ background: darkColors.card }}>
+                  <CTableHeaderCell style={{ color: darkColors.accent }}>ID</CTableHeaderCell>
+                  <CTableHeaderCell style={{ color: darkColors.accent }}>Estudiante</CTableHeaderCell>
+                  <CTableHeaderCell style={{ color: darkColors.accent }}>Sección</CTableHeaderCell>
+                  <CTableHeaderCell style={{ color: darkColors.accent }}>Fecha</CTableHeaderCell>
+                  <CTableHeaderCell style={{ color: darkColors.accent }}>Estado</CTableHeaderCell>
+                  <CTableHeaderCell style={{ color: darkColors.accent }}>Pago</CTableHeaderCell>
+                  <CTableHeaderCell style={{ color: darkColors.accent, textAlign: 'center' }}>Acciones</CTableHeaderCell>
                 </CTableRow>
-              );
-            })}
-          </CTableBody>
-        </CTable>
+              </CTableHead>
+              <CTableBody>
+                {filteredEnrollments.length === 0 ? (
+                  <CTableRow>
+                    <CTableDataCell colSpan={7} className="text-center" style={{ color: darkColors.secondary }}>
+                      No hay matrículas registradas.
+                    </CTableDataCell>
+                  </CTableRow>
+                ) : (
+                  filteredEnrollments.map((enrollment) => {
+                    const student = students.find((s) => s.id === enrollment.student_id);
+                    const section = sections.find((sec) => sec.id === enrollment.section_id);
+                    return (
+                      <CTableRow key={enrollment.id}>
+                        <CTableDataCell>{enrollment.id}</CTableDataCell>
+                        <CTableDataCell>
+                          {student ? `${student.first_name} ${student.last_name}` : 'N/A'}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {section ? `Materia: ${section.subject_id}, Aula: ${section.classroom}` : 'N/A'}
+                        </CTableDataCell>
+                        <CTableDataCell>
+                          {enrollment.enrollment_date ? new Date(enrollment.enrollment_date).toLocaleDateString() : ''}
+                        </CTableDataCell>
+                        <CTableDataCell>{enrollment.status}</CTableDataCell>
+                        <CTableDataCell>{enrollment.payment_status}</CTableDataCell>
+                        <CTableDataCell style={{ textAlign: 'center' }}>
+                          <CButton
+                            color="info"
+                            size="sm"
+                            className="me-2"
+                            style={{
+                              color: '#fff',
+                              borderRadius: 6,
+                              padding: '4px 7px',
+                              minWidth: 0,
+                              minHeight: 0,
+                            }}
+                            onClick={() => {
+                              setSelectedEnrollment(enrollment);
+                              setEditEnrollment({
+                                id: enrollment.id,
+                                student_id: enrollment.student_id,
+                                section_id: enrollment.section_id,
+                                enrollment_date: enrollment.enrollment_date,
+                                status: enrollment.status,
+                                payment_status: enrollment.payment_status,
+                              });
+                              setVisibleEdit(true);
+                            }}
+                          >
+                            <CIcon icon={cilPencil} size="sm" />
+                          </CButton>
+                          <CButton
+                            color="danger"
+                            size="sm"
+                            style={{
+                              color: '#fff',
+                              borderRadius: 6,
+                              padding: '4px 7px',
+                              minWidth: 0,
+                              minHeight: 0,
+                            }}
+                            onClick={() => {
+                              setSelectedEnrollment(enrollment);
+                              setVisibleDelete(true);
+                            }}
+                          >
+                            <CIcon icon={cilTrash} size="sm" />
+                          </CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    );
+                  })
+                )}
+              </CTableBody>
+            </CTable>
+          </div>
+        </CCol>
+      </CRow>
 
-        {/* Modal para Agregar Matrícula */}
-        <CModal visible={visibleAdd} onClose={() => setVisibleAdd(false)}>
-          <CModalHeader>
-            <CModalTitle>Add Enrollment</CModalTitle>
-          </CModalHeader>
-          <CModalBody>
-            <CForm>
-              <CFormSelect
-                className="mb-3"
-                label="Student"
-                value={newEnrollment.student_id}
-                onChange={(e) => handleInputChange(e, setNewEnrollment, 'student_id')}
-              >
-                <option value="">Select Student</option>
-                {students.map((student) => (
-                  <option key={student.id} value={student.id}>
-                    {student.first_name} {student.last_name} ({student.email})
-                  </option>
-                ))}
-              </CFormSelect>
-              <CFormSelect
-                className="mb-3"
-                label="Section"
-                value={newEnrollment.section_id}
-                onChange={(e) => handleInputChange(e, setNewEnrollment, 'section_id')}
-              >
-                <option value="">Select Section</option>
-                {sections.map((section) => (
-                  <option key={section.id} value={section.id}>
-                    Subject ID: {section.subject_id}, Classroom: {section.classroom}
-                  </option>
-                ))}
-              </CFormSelect>
-              <CFormInput
-                type="date"
-                label="Enrollment Date"
-                className="mb-3"
-                value={newEnrollment.enrollment_date}
-                onChange={(e) => handleInputChange(e, setNewEnrollment, 'enrollment_date')}
-              />
-              <CFormSelect
-                className="mb-3"
-                label="Status"
-                value={newEnrollment.status}
-                onChange={(e) => handleInputChange(e, setNewEnrollment, 'status')}
-                options={[
-                  { label: 'Active', value: 'active' },
-                  { label: 'Inactive', value: 'inactive' },
-                  { label: 'Completed', value: 'completed' },
-                ]}
-              />
-              <CFormSelect
-                className="mb-3"
-                label="Payment Status"
-                value={newEnrollment.payment_status}
-                onChange={(e) => handleInputChange(e, setNewEnrollment, 'payment_status')}
-                options={[
-                  { label: 'Unpaid', value: 'unpaid' },
-                  { label: 'Paid', value: 'paid' },
-                  { label: 'Partial', value: 'partial' },
-                ]}
-              />
-            </CForm>
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="info" style={{ color: 'white' }} onClick={handleAddEnrollment}>
-              Save
-            </CButton>
-            <CButton color="danger" style={{ color: 'white' }} onClick={() => setVisibleAdd(false)}>
-              Cancel
-            </CButton>
-          </CModalFooter>
-        </CModal>
+      {/* Modal para Agregar Matrícula */}
+      <CModal visible={visibleAdd} onClose={() => setVisibleAdd(false)} alignment="center">
+        <CModalHeader style={{ background: darkColors.card }}>
+          <CModalTitle style={{ color: darkColors.accent }}>Nueva Matrícula</CModalTitle>
+        </CModalHeader>
+        <CModalBody style={{ background: darkColors.card }}>
+          <CForm>
+            <CFormSelect
+              className="mb-3"
+              label="Estudiante"
+              value={newEnrollment.student_id}
+              onChange={(e) => handleInputChange(e, setNewEnrollment, 'student_id')}
+              style={{ background: darkColors.background, color: darkColors.text, borderColor: darkColors.border }}
+            >
+              <option value="">Selecciona Estudiante</option>
+              {students.map((student) => (
+                <option key={student.id} value={student.id}>
+                  {student.first_name} {student.last_name} ({student.email})
+                </option>
+              ))}
+            </CFormSelect>
+            <CFormSelect
+              className="mb-3"
+              label="Sección"
+              value={newEnrollment.section_id}
+              onChange={(e) => handleInputChange(e, setNewEnrollment, 'section_id')}
+              style={{ background: darkColors.background, color: darkColors.text, borderColor: darkColors.border }}
+            >
+              <option value="">Selecciona Sección</option>
+              {sections.map((section) => (
+                <option key={section.id} value={section.id}>
+                  Materia: {section.subject_id}, Aula: {section.classroom}
+                </option>
+              ))}
+            </CFormSelect>
+            <CFormInput
+              type="date"
+              label="Fecha de Matrícula"
+              className="mb-3"
+              value={newEnrollment.enrollment_date}
+              onChange={(e) => handleInputChange(e, setNewEnrollment, 'enrollment_date')}
+              style={{ background: darkColors.background, color: darkColors.text, borderColor: darkColors.border }}
+            />
+            <CFormSelect
+              className="mb-3"
+              label="Estado"
+              value={newEnrollment.status}
+              onChange={(e) => handleInputChange(e, setNewEnrollment, 'status')}
+              style={{ background: darkColors.background, color: darkColors.text, borderColor: darkColors.border }}
+              options={[
+                { label: 'Activo', value: 'active' },
+                { label: 'Inactivo', value: 'inactive' },
+                { label: 'Completado', value: 'completed' },
+              ]}
+            />
+            <CFormSelect
+              className="mb-3"
+              label="Pago"
+              value={newEnrollment.payment_status}
+              onChange={(e) => handleInputChange(e, setNewEnrollment, 'payment_status')}
+              style={{ background: darkColors.background, color: darkColors.text, borderColor: darkColors.border }}
+              options={[
+                { label: 'No Pagado', value: 'unpaid' },
+                { label: 'Pagado', value: 'paid' },
+                { label: 'Parcial', value: 'partial' },
+              ]}
+            />
+          </CForm>
+        </CModalBody>
+        <CModalFooter style={{ background: darkColors.card }}>
+          <CButton color="secondary" onClick={() => setVisibleAdd(false)}>
+            Cancelar
+          </CButton>
+          <CButton color="warning" style={{ color: darkColors.background, fontWeight: 600 }} onClick={handleAddEnrollment}>
+            Guardar
+          </CButton>
+        </CModalFooter>
+      </CModal>
 
-        {/* Modal para Editar Matrícula */}
-        <CModal visible={visibleEdit} onClose={() => setVisibleEdit(false)}>
-          <CModalHeader>
-            <CModalTitle>Edit Enrollment</CModalTitle>
-          </CModalHeader>
-          <CModalBody>
-            <CForm>
-              <CFormSelect
-                className="mb-3"
-                label="Student"
-                value={editEnrollment.student_id}
-                onChange={(e) => handleInputChange(e, setEditEnrollment, 'student_id')}
-              >
-                <option value="">Select Student</option>
-                {students.map((student) => (
-                  <option key={student.id} value={student.id}>
-                    {student.first_name} {student.last_name} ({student.email})
-                  </option>
-                ))}
-              </CFormSelect>
-              <CFormSelect
-                className="mb-3"
-                label="Section"
-                value={editEnrollment.section_id}
-                onChange={(e) => handleInputChange(e, setEditEnrollment, 'section_id')}
-              >
-                <option value="">Select Section</option>
-                {sections.map((section) => (
-                  <option key={section.id} value={section.id}>
-                    Subject ID: {section.subject_id}, Classroom: {section.classroom}
-                  </option>
-                ))}
-              </CFormSelect>
-              <CFormInput
-                type="date"
-                label="Enrollment Date"
-                className="mb-3"
-                value={editEnrollment.enrollment_date}
-                onChange={(e) => handleInputChange(e, setEditEnrollment, 'enrollment_date')}
-              />
-              <CFormSelect
-                className="mb-3"
-                label="Status"
-                value={editEnrollment.status}
-                onChange={(e) => handleInputChange(e, setEditEnrollment, 'status')}
-                options={[
-                  { label: 'Active', value: 'active' },
-                  { label: 'Inactive', value: 'inactive' },
-                  { label: 'Completed', value: 'completed' },
-                ]}
-              />
-              <CFormSelect
-                className="mb-3"
-                label="Payment Status"
-                value={editEnrollment.payment_status}
-                onChange={(e) => handleInputChange(e, setEditEnrollment, 'payment_status')}
-                options={[
-                  { label: 'Unpaid', value: 'unpaid' },
-                  { label: 'Paid', value: 'paid' },
-                  { label: 'Partial', value: 'partial' },
-                ]}
-              />
-            </CForm>
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="info" style={{ color: 'white' }} onClick={handleEditEnrollment}>
-              Save Changes
-            </CButton>
-            <CButton color="danger" style={{ color: 'white' }} onClick={() => setVisibleEdit(false)}>
-              Cancel
-            </CButton>
-          </CModalFooter>
-        </CModal>
+      {/* Modal para Editar Matrícula */}
+      <CModal visible={visibleEdit} onClose={() => setVisibleEdit(false)} alignment="center">
+        <CModalHeader style={{ background: darkColors.card }}>
+          <CModalTitle style={{ color: darkColors.accent }}>Editar Matrícula</CModalTitle>
+        </CModalHeader>
+        <CModalBody style={{ background: darkColors.card }}>
+          <CForm>
+            <CFormSelect
+              className="mb-3"
+              label="Estudiante"
+              value={editEnrollment.student_id}
+              onChange={(e) => handleInputChange(e, setEditEnrollment, 'student_id')}
+              style={{ background: darkColors.background, color: darkColors.text, borderColor: darkColors.border }}
+            >
+              <option value="">Selecciona Estudiante</option>
+              {students.map((student) => (
+                <option key={student.id} value={student.id}>
+                  {student.first_name} {student.last_name} ({student.email})
+                </option>
+              ))}
+            </CFormSelect>
+            <CFormSelect
+              className="mb-3"
+              label="Sección"
+              value={editEnrollment.section_id}
+              onChange={(e) => handleInputChange(e, setEditEnrollment, 'section_id')}
+              style={{ background: darkColors.background, color: darkColors.text, borderColor: darkColors.border }}
+            >
+              <option value="">Selecciona Sección</option>
+              {sections.map((section) => (
+                <option key={section.id} value={section.id}>
+                  Materia: {section.subject_id}, Aula: {section.classroom}
+                </option>
+              ))}
+            </CFormSelect>
+            <CFormInput
+              type="date"
+              label="Fecha de Matrícula"
+              className="mb-3"
+              value={editEnrollment.enrollment_date}
+              onChange={(e) => handleInputChange(e, setEditEnrollment, 'enrollment_date')}
+              style={{ background: darkColors.background, color: darkColors.text, borderColor: darkColors.border }}
+            />
+            <CFormSelect
+              className="mb-3"
+              label="Estado"
+              value={editEnrollment.status}
+              onChange={(e) => handleInputChange(e, setEditEnrollment, 'status')}
+              style={{ background: darkColors.background, color: darkColors.text, borderColor: darkColors.border }}
+              options={[
+                { label: 'Activo', value: 'active' },
+                { label: 'Inactivo', value: 'inactive' },
+                { label: 'Completado', value: 'completed' },
+              ]}
+            />
+            <CFormSelect
+              className="mb-3"
+              label="Pago"
+              value={editEnrollment.payment_status}
+              onChange={(e) => handleInputChange(e, setEditEnrollment, 'payment_status')}
+              style={{ background: darkColors.background, color: darkColors.text, borderColor: darkColors.border }}
+              options={[
+                { label: 'No Pagado', value: 'unpaid' },
+                { label: 'Pagado', value: 'paid' },
+                { label: 'Parcial', value: 'partial' },
+              ]}
+            />
+          </CForm>
+        </CModalBody>
+        <CModalFooter style={{ background: darkColors.card }}>
+          <CButton color="secondary" onClick={() => setVisibleEdit(false)}>
+            Cancelar
+          </CButton>
+          <CButton color="warning" style={{ color: darkColors.background, fontWeight: 600 }} onClick={handleEditEnrollment}>
+            Guardar Cambios
+          </CButton>
+        </CModalFooter>
+      </CModal>
 
-        {/* Modal para Eliminar Matrícula */}
-        <CModal visible={visibleDelete} onClose={() => setVisibleDelete(false)}>
-          <CModalHeader>
-            <CModalTitle>Delete Enrollment</CModalTitle>
-          </CModalHeader>
-          <CModalBody>
-            Are you sure you want to delete this enrollment?
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="danger" style={{ color: 'white' }} onClick={handleDeleteEnrollment}>
-              Confirm Delete
-            </CButton>
-            <CButton color="secondary" style={{ color: 'white' }} onClick={() => setVisibleDelete(false)}>
-              Cancel
-            </CButton>
-          </CModalFooter>
-        </CModal>
-      </CCardBody>
-    </CCard>
+      {/* Modal para Eliminar Matrícula */}
+      <CModal visible={visibleDelete} onClose={() => setVisibleDelete(false)} alignment="center">
+        <CModalHeader style={{ background: darkColors.card }}>
+          <CModalTitle style={{ color: darkColors.accent }}>Eliminar Matrícula</CModalTitle>
+        </CModalHeader>
+        <CModalBody style={{ background: darkColors.card, color: darkColors.text }}>
+          ¿Estás seguro de que deseas eliminar esta matrícula?
+        </CModalBody>
+        <CModalFooter style={{ background: darkColors.card }}>
+          <CButton color="danger" style={{ color: '#fff' }} onClick={handleDeleteEnrollment}>
+            Eliminar
+          </CButton>
+          <CButton color="secondary" style={{ color: '#fff' }} onClick={() => setVisibleDelete(false)}>
+            Cancelar
+          </CButton>
+        </CModalFooter>
+      </CModal>
+    </div>
   );
 };
 

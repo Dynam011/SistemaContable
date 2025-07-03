@@ -20,7 +20,9 @@ import {
   CAlert,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cilPencil, cilTrash, cilPlus } from '@coreui/icons'
+import { cilPencil, cilTrash, cilPlus, cilCloudDownload } from '@coreui/icons'
+import { PDFDownloadLink } from '@react-pdf/renderer'
+import PDFReportUsers from '../../components/PDFs/PDFReportUsers'
 
 const darkColors = {
   card: '#23262F',
@@ -28,8 +30,8 @@ const darkColors = {
   text: '#F5F6FA',
   secondary: '#A3A7B7',
   border: '#31344b',
-
 }
+
 
 const UserList = () => {
   const [users, setUsers] = useState([])
@@ -237,19 +239,51 @@ const UserList = () => {
               <h3 style={{ color: darkColors.accent, margin: 0, fontWeight: 700, letterSpacing: 1 }}>
                 Usuarios
               </h3>
-              <CButton
-                color="warning"
-                style={{
-                  color: darkColors.background,
-                  fontWeight: 600,
-                  borderRadius: 8,
-                  boxShadow: '0 2px 8px #ffb34744',
-                }}
-                onClick={handleAdd}
-              >
-                <CIcon icon={cilPlus} className="me-2" />
-                Nuevo Usuario
-              </CButton>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <PDFDownloadLink
+                  document={
+                    <PDFReportUsers
+                      users={filteredUsers}
+                      fecha={new Date().toLocaleDateString()}
+                    />
+                  }
+                  fileName={`usuarios_${new Date().toISOString().slice(0, 10)}.pdf`}
+                  style={{
+                    textDecoration: 'none',
+                  }}
+                >
+                  {({ loading }) => (
+                    <CButton
+                      color="info"
+                      style={{
+                        color: '#fff',
+                        fontWeight: 600,
+                        borderRadius: 8,
+                        boxShadow: '0 2px 8px #00bfff44',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                      }}
+                    >
+                      <CIcon icon={cilCloudDownload} />
+                      {loading ? 'Generando PDF...' : 'Descargar PDF'}
+                    </CButton>
+                  )}
+                </PDFDownloadLink>
+                <CButton
+                  color="warning"
+                  style={{
+                    color: darkColors.background,
+                    fontWeight: 600,
+                    borderRadius: 8,
+                    boxShadow: '0 2px 8px #ffb34744',
+                  }}
+                  onClick={handleAdd}
+                >
+                  <CIcon icon={cilPlus} className="me-2" />
+                  Nuevo Usuario
+                </CButton>
+              </div>
             </div>
             <CForm className="my-3">
               <CRow className="g-2">
