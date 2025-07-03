@@ -33,6 +33,7 @@
     "chart.js": "^4.4.8",
     "classnames": "^2.5.1",
     "core-js": "^3.40.0",
+    "cors": "^2.8.5",
     "jquery": "^3.7.1",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",

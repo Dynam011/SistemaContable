@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   CButton,
   CCard,
@@ -8,158 +8,166 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilLockLocked, cilUser } from '@coreui/icons';
+} from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import { cilLockLocked, cilUser } from '@coreui/icons'
 
-import fondoLogin from 'src/assets/images/fondologin.jpg';
+import fondoLogin from 'src/assets/images/fondologin.jpg'
 
 const Login = () => {
-  const [showRegister, setShowRegister] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
-  const [loginUsername, setLoginUsername] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [registerUsername, setRegisterUsername] = useState('');
-  const [registerEmail, setRegisterEmail] = useState('');
-  const [registerPassword, setRegisterPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
-  const [registerError, setRegisterError] = useState('');
-  const [emailError, setEmailError] = useState('');
+  const [showRegister, setShowRegister] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('')
+  const [loginUsername, setLoginUsername] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [registerUsername, setRegisterUsername] = useState('')
+  const [registerEmail, setRegisterEmail] = useState('')
+  const [registerPassword, setRegisterPassword] = useState('')
+  const [loginError, setLoginError] = useState('')
+  const [registerError, setRegisterError] = useState('')
+  const [emailError, setEmailError] = useState('')
 
   useEffect(() => {
-    document.body.style.margin = '0';
-    document.body.style.padding = '0';
-    document.body.style.height = '100vh';
-    document.body.style.overflow = 'hidden';
-    document.body.style.background = `url(${fondoLogin}) center center / cover no-repeat`;
-  }, []);
+    document.body.style.margin = '0'
+    document.body.style.padding = '0'
+    document.body.style.height = '100vh'
+    document.body.style.overflow = 'hidden'
+    document.body.style.background = `url(${fondoLogin}) center center / cover no-repeat`
+  }, [])
 
-  const handleLogin = async () => {
-    if (!loginUsername || !loginPassword) {
-      setLoginError('Por favor, introduce email y contraseña.');
-      return;
-    }
-    setLoginError('');
-  
+  const handleLogin = async (e) => {
+    console.log('funca')
+    e.preventDefault()
     try {
-      const response = await fetch(
-        `http://localhost:5000/users?email=${loginUsername}&password_hash=${loginPassword}`
-      );
-      const users = await response.json();
-  
-      if (users.length > 0) {
-        console.log('Inicio de sesión exitoso para:', users[0]);
-        // Aquí se podrá guardar información más adelante del token
-        // localStorage.setItem('userId', users[0].id);
-        window.location.href = '/dashboard'; // Redirigir a la página principal
+      const response = await fetch('http://localhost:4000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginUsername, password: loginPassword }),
+      })
+
+      const data = await response.json()
+      console.log('Respuesta del servidor:', data)
+      console.log(response, "  ", response.ok)
+      if (response.ok) {
+        localStorage.setItem('token', data.token)
+        
+        localStorage.setItem(
+          'usuario',
+          JSON.stringify({
+            email: data.email,
+            rol_id: data.rol_id,
+          }),
+        )
+        window.location.href = '/#/dashboard'; // O usa navigate('/dashboard') si tienes el hook
       } else {
-        setLoginError('Credenciales inválidas');
+        setLoginError(data.message || 'Error al iniciar sesión')
+        setShowErrorModal(true)
       }
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      setLoginError('Error al conectar con el servidor.');
+      setLoginError(data.message || 'Error al iniciar sesión')
+      setShowErrorModal(true)
+      console.error('Error al iniciar sesión:', error)
     }
-  };
+  }
 
   const handleRegister = async () => {
-  if (!registerUsername || !registerEmail || !registerPassword) {
-    setRegisterError('Por favor, completa todos los campos.');
-    return;
-  }
-  if (!registerEmail.includes('@')) {
-    setRegisterError('Por favor, introduce un email válido.');
-    return;
-  }
-
-  // Validación de contraseña
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  const passwordErrors = [];
-
-  if (registerPassword.length < 8) {
-    passwordErrors.push('Al menos 8 caracteres.');
-  }
-  if (!/(?=.*[a-z])/.test(registerPassword)) {
-    passwordErrors.push('Al menos una letra minúscula.');
-  }
-  if (!/(?=.*[A-Z])/.test(registerPassword)) {
-    passwordErrors.push('Al menos una letra mayúscula.');
-  }
-  if (!/(?=.*\d)/.test(registerPassword)) {
-    passwordErrors.push('Al menos un número.');
-  }
-  if (!/(?=.*[@$!%*?&])/.test(registerPassword)) {
-    passwordErrors.push('Al menos un carácter especial.');
-  }
-
-  if (passwordErrors.length > 0) {
-    setRegisterError(
-      'La contraseña debe cumplir los siguientes requisitos:\n\n' +
-        passwordErrors.map((error) => `${error}\n\n`).join('')
-    );
-    return;
-  }
-
-  setRegisterError('');
-
-  try {
-    const response = await fetch('http://localhost:5000/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: registerUsername,
-        email: registerEmail,
-        password_hash: registerPassword, 
-      }),
-    });
-
-    if (response.ok) {
-      const newUser = await response.json();
-      console.log('Usuario registrado exitosamente:', newUser);
-      alert('Registrado exitosamente! Por favor, inicia sesión.');
-      setShowRegister(false); // Volver al formulario de inicio de sesión
-    } else {
-      const errorData = await response.json();
-      setRegisterError(errorData.message || 'Error al registrar el usuario.');
+    if (!registerUsername || !registerEmail || !registerPassword) {
+      setRegisterError('Por favor, completa todos los campos.')
+      return
     }
-  } catch (error) {
-    console.error('Error al registrar el usuario:', error);
-    setRegisterError('Error al conectar con el servidor.');
-  }
-};
-
-const handleForgotPassword = async () => {
-  if (!forgotPasswordEmail) {
-    setEmailError('Por favor, introduce tu correo electrónico.');
-    return;
-  }
-  if (!forgotPasswordEmail.includes('@')) {
-    setEmailError('Por favor, introduce un correo electrónico válido.');
-    return;
-  }
-  setEmailError('');
-
-  try {
-    const response = await fetch(`http://localhost:5000/users?email=${forgotPasswordEmail}`);
-    const users = await response.json();
-
-    if (users.length > 0) {
-      // Simulación de envío de correo electrónico exitoso
-      alert(
-        `Se ha enviado un código de restablecimiento a ${forgotPasswordEmail}. Por favor, verifica tu correo.`
-      );
-      setShowForgotPassword(false); // Volver al formulario de inicio de sesión
-      setForgotPasswordEmail(''); // Limpiar datos 
-    } else {
-      setEmailError('No se encontró ningún usuario con ese correo electrónico.');
+    if (!registerEmail.includes('@')) {
+      setRegisterError('Por favor, introduce un email válido.')
+      return
     }
-  } catch (error) {
-    console.error('Error al verificar el correo electrónico:', error);
-    setEmailError('Error al conectar con el servidor.');
+
+    // Validación de contraseña
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    const passwordErrors = []
+
+    if (registerPassword.length < 8) {
+      passwordErrors.push('Al menos 8 caracteres.')
+    }
+    if (!/(?=.*[a-z])/.test(registerPassword)) {
+      passwordErrors.push('Al menos una letra minúscula.')
+    }
+    if (!/(?=.*[A-Z])/.test(registerPassword)) {
+      passwordErrors.push('Al menos una letra mayúscula.')
+    }
+    if (!/(?=.*\d)/.test(registerPassword)) {
+      passwordErrors.push('Al menos un número.')
+    }
+    if (!/(?=.*[@$!%*?&])/.test(registerPassword)) {
+      passwordErrors.push('Al menos un carácter especial.')
+    }
+
+    if (passwordErrors.length > 0) {
+      setRegisterError(
+        'La contraseña debe cumplir los siguientes requisitos:\n\n' +
+          passwordErrors.map((error) => `${error}\n\n`).join(''),
+      )
+      return
+    }
+
+    setRegisterError('')
+
+    try {
+      const response = await fetch('http://localhost:5000/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: registerUsername,
+          email: registerEmail,
+          password_hash: registerPassword,
+        }),
+      })
+
+      if (response.ok) {
+        const newUser = await response.json()
+        console.log('Usuario registrado exitosamente:', newUser)
+        alert('Registrado exitosamente! Por favor, inicia sesión.')
+        setShowRegister(false) // Volver al formulario de inicio de sesión
+      } else {
+        const errorData = await response.json()
+        setRegisterError(errorData.message || 'Error al registrar el usuario.')
+      }
+    } catch (error) {
+      console.error('Error al registrar el usuario:', error)
+      setRegisterError('Error al conectar con el servidor.')
+    }
   }
-};
+
+  const handleForgotPassword = async () => {
+    if (!forgotPasswordEmail) {
+      setEmailError('Por favor, introduce tu correo electrónico.')
+      return
+    }
+    if (!forgotPasswordEmail.includes('@')) {
+      setEmailError('Por favor, introduce un correo electrónico válido.')
+      return
+    }
+    setEmailError('')
+
+    try {
+      const response = await fetch(`http://localhost:5000/users?email=${forgotPasswordEmail}`)
+      const users = await response.json()
+
+      if (users.length > 0) {
+        // Simulación de envío de correo electrónico exitoso
+        alert(
+          `Se ha enviado un código de restablecimiento a ${forgotPasswordEmail}. Por favor, verifica tu correo.`,
+        )
+        setShowForgotPassword(false) // Volver al formulario de inicio de sesión
+        setForgotPasswordEmail('') // Limpiar datos
+      } else {
+        setEmailError('No se encontró ningún usuario con ese correo electrónico.')
+      }
+    } catch (error) {
+      console.error('Error al verificar el correo electrónico:', error)
+      setEmailError('Error al conectar con el servidor.')
+    }
+  }
 
   return (
     <div
@@ -189,7 +197,7 @@ const handleForgotPassword = async () => {
           }}
         >
           <CCardBody>
-          {showForgotPassword ? (
+            {showForgotPassword ? (
               <CForm>
                 <h1 className="text-center">Forgot Password</h1>
                 <p className="text-body-secondary text-center">
@@ -281,7 +289,7 @@ const handleForgotPassword = async () => {
                 </CRow>
               </CForm>
             ) : (
-              <CForm>
+              <CForm onSubmit={handleLogin}>
                 <h1 className="text-center">Login</h1>
                 <p className="text-body-secondary text-center">Sign In to your account</p>
                 <CInputGroup className="mb-3">
@@ -312,7 +320,7 @@ const handleForgotPassword = async () => {
                   <CButton
                     style={{ backgroundColor: '#082d9c', color: 'white' }}
                     className="px-4 w-100 mb-2"
-                    onClick={handleLogin}
+                    type="submit"
                   >
                     Login
                   </CButton>
@@ -337,7 +345,7 @@ const handleForgotPassword = async () => {
         </CCard>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

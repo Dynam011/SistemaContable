@@ -1,6 +1,7 @@
 import React, { Suspense, useEffect } from 'react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import PrivateRoute from './components/PrivateRoute';
 
 import { CSpinner, useColorModes } from '@coreui/react'
 import './scss/style.scss'
@@ -14,7 +15,7 @@ const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 // Pages
 const Login = React.lazy(() => import('./views/pages/login/Login'))
 const Register = React.lazy(() => import('./views/pages/register/Register'))
-
+const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
 const App = () => {
   const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -44,10 +45,19 @@ const App = () => {
         }
       >
         <Routes>
-          <Route exact path="/login" name="Login" element={<Login />} />
-          <Route exact path="/register" name="Registrarse" element={<Register />} />
-          <Route path="*" name="Inicio" element={<DefaultLayout />} />
-       
+          
+          <Route path="/login" name="Login" element={<Login />} />
+          <Route path="/register" name="Registrarse" element={<Register />} />
+          <Route
+            path="*"
+            element={
+              <PrivateRoute>
+                <DefaultLayout />
+                          
+
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Suspense>
     </HashRouter>
