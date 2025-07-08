@@ -7,7 +7,35 @@
 body {
   background-color: var(--cui-tertiary-bg);
 }
+:root {
+  --color-terra-cotta: #FC4A1A;
+  --color-pale-spring-bud: #F4F1BB;
+  --color-opal: #4ABDAC;
+  --color-alabaster: #E6EBE0;
+  --color-robin-egg-blue: #36C9C6;
+  --color-white: #fff;
+  --color-dark: #222;
+  --color-gray: #6c757d;
 
+  // CoreUI overrides
+  --cui-primary: var(--color-terra-cotta);
+  --cui-secondary: var(--color-opal);
+  --cui-success: var(--color-robin-egg-blue);
+  --cui-info: var(--color-pale-spring-bud);
+  --cui-warning: var(--color-pale-spring-bud);
+  --cui-danger: var(--color-terra-cotta);
+  --cui-light: var(--color-alabaster);
+  --cui-dark: var(--color-dark);
+
+  --cui-body-bg: var(--color-alabaster);
+  --cui-body-color: var(--color-dark);
+  --cui-tertiary-bg: var(--color-alabaster);
+  --cui-footer-bg: var(--color-opal);
+  --cui-sidebar-bg: var(--color-robin-egg-blue); // Sidebar fuerte
+  --cui-header-bg: var(--color-robin-egg-blue);
+}
+
+// ...existing code...
 .wrapper {
   width: 100%;
   padding-inline: var(--cui-sidebar-occupy-start, 0) var(--cui-sidebar-occupy-end, 0);
@@ -24,6 +52,39 @@ body {
   margin-left: 3px;
 }
 
+// Sidebar estilos personalizados
+.sidebar,
+.sidebar[data-coreui-theme="light"] {
+  background-color: #ED6A5A !important;
+  color: var(--color-white) !important;
+  border-right: 2px solid var(--color-opal); // Separador visual
+}
+
+.sidebar .nav-link,
+.sidebar .nav-title {
+  color: var(--color-white) !important;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:focus,
+.sidebar .nav-link:hover {
+  background-color: var(--color-white) !important;
+  color: #FC4A1A !important;
+  font-weight: bold;
+}
+
+// Header
+.header,
+.header[data-coreui-theme="light"] {
+  background-color: var(--cui-header-bg) !important;
+  color: var(--color-dark) !important;
+}
+
+// Footer
+.footer {
+  background-color: var(--cui-footer-bg) !important;
+  color: var(--color-dark) !important;
+}
 .sidebar-header {
   .nav-underline-border {
     --cui-nav-underline-border-link-padding-x: 1rem;
@@ -54,14 +115,4 @@ body {
 
 .footer {
   min-height: calc(3rem + 1px); // stylelint-disable-line function-disallowed-list
-}
-
-@include color-mode(dark) {
-  body {
-    background-color: var(--cui-dark-bg-subtle);
-  }
-
-  .footer {
-    --cui-footer-bg: var(--cui-body-bg);
-  }
 }

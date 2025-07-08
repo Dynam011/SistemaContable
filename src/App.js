@@ -14,7 +14,6 @@ const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
 
 // Pages
 const Login = React.lazy(() => import('./views/pages/login/Login'))
-const Register = React.lazy(() => import('./views/pages/register/Register'))
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 
 const App = () => {
@@ -25,7 +24,7 @@ const App = () => {
     const urlParams = new URLSearchParams(window.location.href.split('?')[1])
     const theme = urlParams.get('theme') && urlParams.get('theme').match(/^[A-Za-z0-9\s]+/)[0]
     if (theme) {
-      setColorMode(theme)
+      setColorMode('light')
     }
 
     if (isColorModeSet()) {
@@ -47,7 +46,6 @@ const App = () => {
         <Routes>
           
           <Route path="/login" name="Login" element={<Login />} />
-          <Route path="/register" name="Registrarse" element={<Register />} />
           <Route
             path="*"
             element={
