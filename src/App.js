@@ -23,15 +23,13 @@ const App = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.href.split('?')[1])
     const theme = urlParams.get('theme') && urlParams.get('theme').match(/^[A-Za-z0-9\s]+/)[0]
-    if (theme) {
-      setColorMode('light')
-    }
-
+ 
+ setColorMode('light')
     if (isColorModeSet()) {
       return
     }
 
-    setColorMode(storedTheme)
+   
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
