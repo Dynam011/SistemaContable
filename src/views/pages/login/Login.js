@@ -47,12 +47,12 @@ const Login = () => {
       return
     }
     // Simulación de autenticación (reemplaza con tu lógica real)
-    if (loginUsername === 'admin@gmail.com' && loginPassword === 'admin') {
+    if (loginUsername.toLocaleLowerCase() == 'admin@gmail.com' && loginPassword === 'admin') {
       // Redirigir o guardar sesión aquí
       // Generar y guardar un token falso en localStorage
       const fakeToken = 'fake-jwt-token-' + Date.now()
       localStorage.setItem('token', fakeToken)
-      window.location.href = '/dashboard'
+      window.location.href = '/#/dashboard'
     } else {
       setLoginError('Usuario o contraseña incorrectos.')
     }
